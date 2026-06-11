@@ -50,6 +50,15 @@ def sample_deck(tmp_path: Path) -> Path:
 
 
 @pytest.fixture()
+def sample_image(tmp_path: Path) -> Path:
+    from PIL import Image
+
+    path = tmp_path / "pic.png"
+    Image.new("RGB", (64, 48), "steelblue").save(path)
+    return path
+
+
+@pytest.fixture()
 def store(tmp_path: Path) -> Store:
     return Store(tmp_path / "ppt-mcp-home")
 

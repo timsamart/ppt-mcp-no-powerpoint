@@ -8,7 +8,7 @@ no network calls, ever. See [DESIGN.md](DESIGN.md) for the full design.
 
 ## Status
 
-**M0 (in progress):** deck sessions + reading tools are working.
+**M0 + M1 done:** deck sessions, reading, and placeholder-first authoring.
 
 | Tool | What it does |
 |---|---|
@@ -18,9 +18,18 @@ no network calls, ever. See [DESIGN.md](DESIGN.md) for the full design.
 | `ppt_get_deck_overview` | Slide size, masters + layouts, per-slide listing |
 | `ppt_get_slide` | Full shape inventory: placeholder roles, geometry, text, notes |
 | `ppt_search_deck` | Search slide text and speaker notes |
+| `ppt_add_slide` | Create from a layout, map semantic content onto placeholders (dry-run-able) |
+| `ppt_set_placeholder_content` | Fill one placeholder by role / idx / shape_id |
+| `ppt_edit_text` | replace_text / set_paragraphs / append_paragraph ops |
+| `ppt_set_notes` | Speaker notes |
+| `ppt_add_table` / `ppt_add_image` / `ppt_add_chart` | Placeholder-first; freeform only behind `allow_freeform=true` |
+| `ppt_delete_slide` / `ppt_move_slide` / `ppt_duplicate_slide` | Slide ops (duplicate copies images + notes) |
 
-Next per the [roadmap](DESIGN.md#14-milestones): authoring (M1), template
-intelligence (M2), compliance + rendering (M3), brand style profiles (M4).
+Try `uv run python scripts/make_demo_deck.py` → `examples/demo.pptx`, built
+entirely through the tools with zero absolute positioning.
+
+Next per the [roadmap](DESIGN.md#14-milestones): template intelligence (M2),
+compliance + rendering (M3), brand style profiles (M4).
 
 ## Quickstart
 

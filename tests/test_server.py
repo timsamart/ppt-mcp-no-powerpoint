@@ -16,6 +16,16 @@ EXPECTED_TOOLS = {
     "ppt_get_deck_overview",
     "ppt_get_slide",
     "ppt_search_deck",
+    "ppt_add_slide",
+    "ppt_set_placeholder_content",
+    "ppt_edit_text",
+    "ppt_set_notes",
+    "ppt_add_table",
+    "ppt_add_image",
+    "ppt_add_chart",
+    "ppt_delete_slide",
+    "ppt_move_slide",
+    "ppt_duplicate_slide",
 }
 
 
