@@ -8,7 +8,8 @@ no network calls, ever. See [DESIGN.md](DESIGN.md) for the full design.
 
 ## Status
 
-**M0 + M1 done:** deck sessions, reading, and placeholder-first authoring.
+**M0 + M1 + M2 done:** deck sessions, reading, placeholder-first authoring,
+and template intelligence.
 
 | Tool | What it does |
 |---|---|
@@ -24,12 +25,21 @@ no network calls, ever. See [DESIGN.md](DESIGN.md) for the full design.
 | `ppt_set_notes` | Speaker notes |
 | `ppt_add_table` / `ppt_add_image` / `ppt_add_chart` | Placeholder-first; freeform only behind `allow_freeform=true` |
 | `ppt_delete_slide` / `ppt_move_slide` / `ppt_duplicate_slide` | Slide ops (duplicate copies images + notes) |
+| `ppt_register_template` | Parse a `.potx`/`.pptx` into a design-system profile (immutable copy) |
+| `ppt_list_templates` / `ppt_inspect_template` / `ppt_inspect_layout` | Registry inspection: layouts, placeholder schemas, theme, intent tags |
+| `ppt_update_template` | Curate names/versions/intent tags |
+| `ppt_extract_theme` | Color + font scheme from a template or open deck |
+| `ppt_recommend_layout` | Rank layouts for a slide intent + content shape, with reasons |
+| `ppt_map_content_to_placeholders` | Preview the content→placeholder mapping without touching a deck |
 
 Try `uv run python scripts/make_demo_deck.py` → `examples/demo.pptx`, built
 entirely through the tools with zero absolute positioning.
 
-Next per the [roadmap](DESIGN.md#14-milestones): template intelligence (M2),
-compliance + rendering (M3), brand style profiles (M4).
+A companion skill for MCP clients lives in
+[skills/ppt-deck-authoring](skills/ppt-deck-authoring/SKILL.md).
+
+Next per the [roadmap](DESIGN.md#14-milestones): compliance + rendering (M3),
+brand style profiles (M4).
 
 ## Quickstart
 

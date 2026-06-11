@@ -26,6 +26,14 @@ EXPECTED_TOOLS = {
     "ppt_delete_slide",
     "ppt_move_slide",
     "ppt_duplicate_slide",
+    "ppt_register_template",
+    "ppt_list_templates",
+    "ppt_inspect_template",
+    "ppt_inspect_layout",
+    "ppt_update_template",
+    "ppt_extract_theme",
+    "ppt_recommend_layout",
+    "ppt_map_content_to_placeholders",
 }
 
 

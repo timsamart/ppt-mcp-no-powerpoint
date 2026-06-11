@@ -69,6 +69,50 @@ def slide_markdown(data: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def template_markdown(entry: dict[str, Any]) -> str:
+    theme = entry["theme"]
+    accents = ", ".join(
+        f"{k}={v}" for k, v in theme["color_scheme"].items() if k.startswith("accent")
+    )
+    lines = [
+        f"# Template {entry['template_id']} — {entry['name']} (v{entry['version']})",
+        f"Slide size: {entry['slide_size']['width_in']} x {entry['slide_size']['height_in']} in"
+        f" · fonts: major={theme['font_scheme'].get('major')}, minor={theme['font_scheme'].get('minor')}",
+        f"Accent colors: {accents}",
+        "",
+        "## Layouts",
+    ]
+    for layout in entry["layouts"]:
+        roles = ", ".join(
+            ph["role"] for ph in layout["placeholders"]
+            if ph["role"] not in ("footer", "date", "slide_number")
+        ) or "(no content placeholders)"
+        tags = ", ".join(layout["intent_tags"]) or "-"
+        lines.append(
+            f"- **{layout['layout_id']}** '{layout['name']}' — placeholders: {roles} · tags: {tags}"
+        )
+    return "\n".join(lines)
+
+
+def layout_markdown(template_id: str, layout: dict[str, Any]) -> str:
+    lines = [
+        f"# Layout {layout['layout_id']} — {layout['name']} (template {template_id})",
+        f"Intent tags: {', '.join(layout['intent_tags']) or '-'}",
+        f"Capacity (estimated): ~{layout['capacity']['body_bullets']} bullets, "
+        f"~{layout['capacity']['chars_per_line']} chars/line",
+        "",
+        "## Placeholders",
+    ]
+    for ph in layout["placeholders"]:
+        geometry = (
+            f"at {ph['left_in']},{ph['top_in']} size {ph['width_in']}x{ph['height_in']} in"
+            if ph["left_in"] is not None
+            else "(geometry inherited from master)"
+        )
+        lines.append(f"- idx:{ph['idx']} role={ph['role']} type={ph['type']} {geometry}")
+    return "\n".join(lines)
+
+
 def search_markdown(data: dict[str, Any]) -> str:
     if data["total_count"] == 0:
         return f"No matches for '{data['query']}'."

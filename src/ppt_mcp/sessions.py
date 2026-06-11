@@ -84,11 +84,16 @@ class SessionManager:
         self.store.log_provenance("ppt_open_deck", deck_id=session.deck_id, source=source)
         return session
 
-    def create_deck(self) -> DeckSession:
+    def create_deck(self, template_source: Path | None = None) -> DeckSession:
         from pptx import Presentation  # deferred: keeps module import light
 
         session = self._new_session(source_path=None)
-        Presentation().save(str(session.working_path))
+        if template_source is not None:
+            from .templates import materialize_as_pptx
+
+            materialize_as_pptx(template_source, session.working_path)
+        else:
+            Presentation().save(str(session.working_path))
         session.write_manifest()
         self.store.log_provenance("ppt_create_deck", deck_id=session.deck_id)
         return session

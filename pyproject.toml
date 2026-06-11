@@ -9,6 +9,7 @@ dependencies = [
     "mcp>=1.2.0",
     "python-pptx>=1.0.2",
     "pydantic>=2.7",
+    "rapidfuzz>=3.14.5",
 ]
 
 [project.scripts]

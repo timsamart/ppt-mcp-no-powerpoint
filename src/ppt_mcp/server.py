@@ -15,8 +15,9 @@ from mcp.types import ToolAnnotations
 from pydantic import Field
 
 from . import format as fmt
-from . import reader, writer
+from . import reader, recommend, writer
 from .errors import PptMcpError
+from .templates import TemplateRegistry, extract_theme_from_master
 from .models import (
     ChartSpec,
     ContentSpec,
@@ -36,6 +37,7 @@ mcp = FastMCP("ppt_mcp")
 
 store = Store()
 sessions = SessionManager(store)
+registry = TemplateRegistry(store)
 
 READ_ONLY = ToolAnnotations(readOnlyHint=True, openWorldHint=False)
 MUTATING = ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False)
@@ -76,11 +78,38 @@ def ppt_open_deck(
 
 
 @mcp.tool(annotations=MUTATING)
-def ppt_create_deck() -> dict[str, Any]:
-    """Create a new blank deck (template-based creation arrives with the
-    template registry). Save it later with ppt_save_deck(path=...)."""
-    session = sessions.create_deck()
-    return {"deck_id": session.deck_id, "source_path": None}
+def ppt_create_deck(
+    template_id: Annotated[
+        str | None,
+        Field(description="Registered template to build on (ppt_list_templates). "
+                          "Inherits its masters, layouts, and theme."),
+    ] = None,
+    include_example_slides: Annotated[
+        bool, Field(description="Keep the template's example slides instead of starting empty")
+    ] = False,
+) -> dict[str, Any]:
+    """Create a new deck — template-first: pass a registered template_id to
+    inherit the corporate design system. Without one you get a bare default
+    deck. Save later with ppt_save_deck(path=...)."""
+    if template_id is None:
+        session = sessions.create_deck()
+        return {"deck_id": session.deck_id, "source_path": None, "template_id": None}
+    entry = registry.get(template_id)
+    session = sessions.create_deck(template_source=registry.materialized_path(template_id))
+    prs = reader.load_presentation(session.working_path)
+    removed = 0
+    if not include_example_slides:
+        for index in range(len(prs.slides), 0, -1):
+            writer.delete_slide(prs, index)
+            removed += 1
+        prs.save(str(session.working_path))
+    return {
+        "deck_id": session.deck_id,
+        "template_id": template_id,
+        "template_name": entry["name"],
+        "example_slides_removed": removed,
+        "layouts": [lo["name"] for lo in entry["layouts"]],
+    }
 
 
 @mcp.tool(annotations=MUTATING)
@@ -179,6 +208,136 @@ def ppt_search_deck(
     if response_format == "json":
         return {"deck_id": deck_id, **data}
     return fmt.search_markdown(data)
+
+
+# -- template registry & intelligence (§10.4) -------------------------------------
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_register_template(
+    path: Annotated[str, Field(description="Absolute path to a .potx or template .pptx")],
+    name: str | None = None,
+    version: str | None = None,
+    metadata: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Register a corporate template: the file is copied into the local store
+    (immutable from then on) and parsed into a design-system profile — masters,
+    layouts with placeholder schemas, theme colors/fonts, inferred intent tags."""
+    entry = registry.register(path, name=name, version=version, metadata=metadata)
+    return {
+        "already_registered": entry.get("already_registered", False),
+        "template_id": entry["template_id"],
+        "name": entry["name"],
+        "version": entry["version"],
+        "masters": len(entry["masters"]),
+        "layouts": len(entry["layouts"]),
+        "example_slide_count": entry["example_slide_count"],
+        "theme_accents": {
+            k: v for k, v in entry["theme"]["color_scheme"].items() if k.startswith("accent")
+        },
+    }
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_list_templates() -> dict[str, Any]:
+    """List registered templates."""
+    return {
+        "templates": [
+            {
+                "template_id": e["template_id"],
+                "name": e["name"],
+                "version": e["version"],
+                "layouts": len(e["layouts"]),
+                "builtin": e.get("builtin", False),
+            }
+            for e in registry.list()
+        ]
+    }
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_inspect_template(
+    template_id: str,
+    response_format: ResponseFormat = "markdown",
+) -> str | dict[str, Any]:
+    """Template design system: masters, layouts with placeholder roles and
+    intent tags, theme color/font schemes."""
+    entry = registry.get(template_id)
+    if response_format == "json":
+        return entry
+    return fmt.template_markdown(entry)
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_inspect_layout(
+    template_id: str,
+    layout: Annotated[str, Field(description="layout_id or layout name")],
+    response_format: ResponseFormat = "markdown",
+) -> str | dict[str, Any]:
+    """Full placeholder schema of one layout: idx, role, type, geometry, and
+    estimated text capacity."""
+    layout_meta = registry.get_layout(template_id, layout)
+    if response_format == "json":
+        return {"template_id": template_id, **layout_meta}
+    return fmt.layout_markdown(template_id, layout_meta)
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_update_template(
+    template_id: str,
+    patch: Annotated[
+        dict[str, Any],
+        Field(description="Editable: name, version, metadata, layout_intent_tags "
+                          "({layout_id: [tags]})"),
+    ],
+) -> dict[str, Any]:
+    """Curate a registered template: rename, set version/metadata, or correct
+    a layout's inferred intent tags."""
+    entry = registry.update(template_id, patch)
+    return {"template_id": template_id, "name": entry["name"], "updated": sorted(patch)}
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_extract_theme(
+    template_id: str | None = None,
+    deck_id: str | None = None,
+) -> dict[str, Any]:
+    """Theme color scheme and font scheme — from a registered template or from
+    an open deck. Pass exactly one of template_id / deck_id."""
+    if (template_id is None) == (deck_id is None):
+        raise PptMcpError("Pass exactly one of template_id or deck_id.")
+    if template_id is not None:
+        return {"template_id": template_id, **registry.get(template_id)["theme"]}
+    prs = _prs(deck_id)
+    return {"deck_id": deck_id, **extract_theme_from_master(prs.slide_masters[0])}
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_recommend_layout(
+    template_id: str,
+    slide_intent: Annotated[str, Field(description="What the slide is for, e.g. 'risk overview'")],
+    content: ContentSpec,
+    top_n: Annotated[int, Field(ge=1, le=10)] = 3,
+) -> dict[str, Any]:
+    """Rank the template's layouts for a slide intent + content shape.
+    Deterministic scoring with reasons — treat it as advice, not verdict."""
+    entry = registry.get(template_id)
+    recommendations = recommend.recommend_layouts(
+        entry["layouts"], slide_intent, content, top_n=top_n
+    )
+    return {"template_id": template_id, "recommendations": recommendations}
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_map_content_to_placeholders(
+    template_id: str,
+    layout: Annotated[str, Field(description="layout_id or layout name")],
+    content: ContentSpec,
+) -> dict[str, Any]:
+    """Preview how semantic content would map onto a layout's placeholders —
+    the same mapping ppt_add_slide will apply, without touching any deck."""
+    layout_obj = registry.load_layout_object(template_id, layout)
+    return writer.plan_content_mapping(layout_obj, content)
 
 
 # -- authoring (§10.3) -----------------------------------------------------------
