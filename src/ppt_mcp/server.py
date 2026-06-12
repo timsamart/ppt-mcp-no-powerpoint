@@ -8,15 +8,18 @@ from __future__ import annotations
 
 import logging
 import sys
+from pathlib import Path
 from typing import Annotated, Any, Literal
 
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 from pydantic import Field
 
+from . import compliance
 from . import format as fmt
 from . import reader, recommend, writer
 from .errors import PptMcpError
+from .render import RenderService, diff_images
 from .templates import TemplateRegistry, extract_theme_from_master
 from .models import (
     ChartSpec,
@@ -38,6 +41,7 @@ mcp = FastMCP("ppt_mcp")
 store = Store()
 sessions = SessionManager(store)
 registry = TemplateRegistry(store)
+renderer = RenderService(store)
 
 READ_ONLY = ToolAnnotations(readOnlyHint=True, openWorldHint=False)
 MUTATING = ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False)
@@ -593,6 +597,149 @@ def ppt_duplicate_slide(
     new_index = writer.duplicate_slide(prs, slide_index)
     _commit(deck_id, prs, "ppt_duplicate_slide", slide_index=slide_index)
     return {"applied": True, "plan": plan, "new_slide_index": new_index}
+
+
+# -- compliance (§10.5) ------------------------------------------------------------
+
+
+def _template_entry_or_none(template_id: str | None) -> dict[str, Any] | None:
+    return registry.get(template_id) if template_id is not None else None
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_validate_compliance(
+    deck_id: str,
+    template_id: Annotated[
+        str | None,
+        Field(description="Reference template. Omit to validate against the deck's own theme "
+                          "(template-relative rules C01/C08/C10 are then skipped)."),
+    ] = None,
+) -> dict[str, Any]:
+    """Check the deck against compliance rules C01–C10: layout provenance,
+    theme fonts/colors, footers, covered logos, placeholder bypass, estimated
+    text overflow, density, off-grid shapes, slide size. Returns structured
+    findings with severity and auto_fixable flags."""
+    findings = compliance.validate(_prs(deck_id), _template_entry_or_none(template_id))
+    summary = {
+        level: len([f for f in findings if f["severity"] == level])
+        for level in ("error", "warning", "info")
+    }
+    return {"deck_id": deck_id, "template_id": template_id, "summary": summary,
+            "findings": findings}
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_repair_compliance(
+    deck_id: str,
+    template_id: str | None = None,
+    strategy: Annotated[str, Field(description="Only 'conservative' for now")] = "conservative",
+    dry_run: Annotated[bool, Field(description="Default TRUE — repairs must be previewed")] = True,
+) -> dict[str, Any]:
+    """Fix auto-fixable compliance findings. Conservative strategy: re-link
+    non-theme fonts to the theme, snap near-theme colors to exact theme values.
+    dry_run defaults to true; pass dry_run=false to apply."""
+    prs = _prs(deck_id)
+    entry = _template_entry_or_none(template_id)
+    findings = compliance.validate(prs, entry)
+    fixes = compliance.plan_repairs(prs, findings, entry, strategy=strategy)
+    if dry_run:
+        return {"applied": False, "planned_fixes": fixes,
+                "unfixable_findings": len(findings) - len(fixes)}
+    applied = compliance.apply_repairs(prs, fixes, entry)
+    _commit(deck_id, prs, "ppt_repair_compliance", fixes=len(fixes))
+    remaining = compliance.validate(_prs(deck_id), entry)
+    return {
+        "applied": True,
+        "fixes_applied": applied,
+        "remaining_findings": len(remaining),
+        "remaining_by_severity": {
+            level: len([f for f in remaining if f["severity"] == level])
+            for level in ("error", "warning", "info")
+        },
+    }
+
+
+# -- rendering & export (§10.7) ------------------------------------------------------
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_render_slide(
+    deck_id: str,
+    slide_index: Annotated[int, Field(ge=1)],
+    dpi: Annotated[int, Field(ge=36, le=300)] = 96,
+):
+    """Render one slide to PNG via headless LibreOffice and return the image.
+    Treat renders as validation evidence — PowerPoint is the fidelity arbiter."""
+    from mcp.server.fastmcp import Image
+
+    session = sessions.get(deck_id)
+    rendered = renderer.render_slides(session.working_path, [slide_index], dpi=dpi)
+    png_path = rendered[slide_index]
+    return [Image(path=str(png_path)), f"Rendered slide {slide_index} -> {png_path}"]
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_render_deck(
+    deck_id: str,
+    dpi: Annotated[int, Field(ge=36, le=300)] = 96,
+) -> dict[str, Any]:
+    """Render every slide to PNG; returns the file paths (use ppt_render_slide
+    to view one inline)."""
+    session = sessions.get(deck_id)
+    rendered = renderer.render_slides(session.working_path, None, dpi=dpi)
+    return {"deck_id": deck_id, "dpi": dpi,
+            "slides": {str(i): str(p) for i, p in sorted(rendered.items())}}
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_export_pdf(
+    deck_id: str,
+    path: Annotated[str, Field(description="Target .pdf path")],
+) -> dict[str, Any]:
+    """Export the deck to PDF (headless LibreOffice)."""
+    import shutil as _shutil
+
+    target = Path(path).expanduser().resolve()
+    if target.suffix.lower() != ".pdf":
+        raise PptMcpError(f"Target must end in .pdf, got '{target.name}'.")
+    session = sessions.get(deck_id)
+    pdf = renderer.to_pdf(session.working_path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    _shutil.copy2(pdf, target)
+    store.log_provenance("ppt_export_pdf", deck_id=deck_id, target=target)
+    return {"deck_id": deck_id, "exported_to": str(target)}
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_visual_diff(
+    deck_id: str,
+    snapshot: Annotated[
+        int, Field(ge=1, description="Snapshot number (1 = oldest); see undo_steps_available"),
+    ],
+    dpi: Annotated[int, Field(ge=36, le=300)] = 96,
+) -> dict[str, Any]:
+    """Pixel-diff the current deck against one of its pre-mutation snapshots —
+    verifies e.g. that a logo or footer survived an edit."""
+    session = sessions.get(deck_id)
+    snapshot_path = session.snapshots_dir / f"{snapshot}.pptx"
+    if not snapshot_path.is_file():
+        raise PptMcpError(
+            f"Snapshot {snapshot} does not exist for deck '{deck_id}' "
+            f"({session.snapshot_count} snapshot(s) available)."
+        )
+    current = renderer.render_slides(session.working_path, None, dpi=dpi)
+    previous = renderer.render_slides(snapshot_path, None, dpi=dpi)
+    slides: dict[str, Any] = {}
+    for index in sorted(set(current) | set(previous)):
+        if index not in current:
+            slides[str(index)] = {"changed": True, "note": "slide removed"}
+        elif index not in previous:
+            slides[str(index)] = {"changed": True, "note": "slide added"}
+        else:
+            slides[str(index)] = diff_images(previous[index], current[index])
+    changed = [i for i, d in slides.items() if d.get("changed")]
+    return {"deck_id": deck_id, "snapshot": snapshot,
+            "changed_slides": changed, "slides": slides}
 
 
 def main() -> None:

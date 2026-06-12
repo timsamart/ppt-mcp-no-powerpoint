@@ -49,8 +49,14 @@ never assembled from absolutely-positioned textboxes.
   has a suitable placeholder and say so in your summary.
 - Never overwrite a registered template; save decks to new paths when in doubt.
 
-## Verification
+## Verification — always close the loop
 
-After building: re-read with `ppt_get_deck_overview` and spot-check slides
-with `ppt_get_slide`. (Rendering and compliance validation tools arrive in
-M3 — use them once available.)
+After building or editing:
+
+1. `ppt_validate_compliance(deck_id, template_id)` — fix errors before
+   delivering. `ppt_repair_compliance` auto-fixes font/color drift (preview
+   with the default dry_run first, then `dry_run=false`).
+2. `ppt_render_slide(deck_id, n)` — look at the slides you changed.
+3. After risky edits, `ppt_visual_diff(deck_id, snapshot)` confirms nothing
+   else changed (logos, footers).
+4. `ppt_export_pdf` when the user wants a shareable artifact.

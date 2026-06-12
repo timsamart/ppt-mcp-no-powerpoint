@@ -8,8 +8,8 @@ no network calls, ever. See [DESIGN.md](DESIGN.md) for the full design.
 
 ## Status
 
-**M0 + M1 + M2 done:** deck sessions, reading, placeholder-first authoring,
-and template intelligence.
+**M0–M3 done:** deck sessions, reading, placeholder-first authoring, template
+intelligence, compliance validation, and rendering.
 
 | Tool | What it does |
 |---|---|
@@ -31,6 +31,15 @@ and template intelligence.
 | `ppt_extract_theme` | Color + font scheme from a template or open deck |
 | `ppt_recommend_layout` | Rank layouts for a slide intent + content shape, with reasons |
 | `ppt_map_content_to_placeholders` | Preview the content→placeholder mapping without touching a deck |
+| `ppt_validate_compliance` | Rules C01–C10: layout provenance, theme fonts/colors, footers, covered logos, placeholder bypass, overflow, density, off-grid, slide size |
+| `ppt_repair_compliance` | Conservative auto-fixes (theme font relink, color snap); dry-run by default |
+| `ppt_render_slide` / `ppt_render_deck` | PNG renders via headless LibreOffice (returns the image inline) |
+| `ppt_export_pdf` | PDF export |
+| `ppt_visual_diff` | Pixel-diff current deck vs a pre-mutation snapshot ("did the logo survive?") |
+
+Rendering needs LibreOffice (`winget install TheDocumentFoundation.LibreOffice`);
+everything else works without it. Renders are validation evidence — PowerPoint
+remains the fidelity arbiter.
 
 Try `uv run python scripts/make_demo_deck.py` → `examples/demo.pptx`, built
 entirely through the tools with zero absolute positioning.
@@ -38,8 +47,8 @@ entirely through the tools with zero absolute positioning.
 A companion skill for MCP clients lives in
 [skills/ppt-deck-authoring](skills/ppt-deck-authoring/SKILL.md).
 
-Next per the [roadmap](DESIGN.md#14-milestones): compliance + rendering (M3),
-brand style profiles (M4).
+Next per the [roadmap](DESIGN.md#14-milestones): brand style profiles + image
+placeholders (M4), apply_template + evals (M5).
 
 ## Quickstart
 

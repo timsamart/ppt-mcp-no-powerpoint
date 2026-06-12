@@ -34,6 +34,12 @@ EXPECTED_TOOLS = {
     "ppt_extract_theme",
     "ppt_recommend_layout",
     "ppt_map_content_to_placeholders",
+    "ppt_validate_compliance",
+    "ppt_repair_compliance",
+    "ppt_render_slide",
+    "ppt_render_deck",
+    "ppt_export_pdf",
+    "ppt_visual_diff",
 }
 
 
