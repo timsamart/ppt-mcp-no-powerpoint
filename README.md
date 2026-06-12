@@ -66,7 +66,9 @@ starter templates and slide patterns (business forms).
 
 ## Quickstart
 
-Requires Python ≥ 3.11 and [uv](https://docs.astral.sh/uv/).
+Requires Python ≥ 3.11. Choose either uv (recommended) or a plain venv.
+
+### With uv
 
 ```powershell
 uv sync
@@ -88,6 +90,35 @@ Or in any MCP client config:
     "ppt-mcp": {
       "command": "uv",
       "args": ["--directory", "H:\\repos\\ppt-mcp-no-powerpoint", "run", "ppt-mcp"]
+    }
+  }
+}
+```
+
+### With a plain venv
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+pytest -q               # all green
+python scripts/smoke_stdio.py
+```
+
+Register with Claude Code (adjust the path if the repo is elsewhere):
+
+```powershell
+claude mcp add ppt-mcp -- H:\repos\ppt-mcp-no-powerpoint\.venv\Scripts\python.exe -m ppt_mcp.server
+```
+
+Or in any MCP client config:
+
+```json
+{
+  "mcpServers": {
+    "ppt-mcp": {
+      "command": "H:\\repos\\ppt-mcp-no-powerpoint\\.venv\\Scripts\\python.exe",
+      "args": ["-m", "ppt_mcp.server"]
     }
   }
 }

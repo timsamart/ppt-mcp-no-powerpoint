@@ -18,6 +18,12 @@ dependencies = [
 [project.scripts]
 ppt-mcp = "ppt_mcp.server:main"
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "anyio>=4.0",
+]
+
 [dependency-groups]
 dev = [
     "pytest>=8.0",
