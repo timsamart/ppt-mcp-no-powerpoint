@@ -13,9 +13,26 @@ from ppt_mcp.templates import CT_PRESENTATION, CT_TEMPLATE
 
 
 @pytest.fixture()
-def template_id(sample_deck):
+def template_source(sample_deck, tmp_path):
+    """A byte-unique copy of the sample deck. Registration is idempotent by
+    content hash and the registry is shared across the test session, so
+    fixtures that assert on registration metadata must not collide with other
+    tests registering identical bytes."""
+    import uuid
+
+    from pptx import Presentation
+
+    prs = Presentation(str(sample_deck))
+    prs.slides[2].notes_slide.notes_text_frame.text = uuid.uuid4().hex
+    path = tmp_path / "unique_template.pptx"
+    prs.save(str(path))
+    return path
+
+
+@pytest.fixture()
+def template_id(template_source):
     return server.ppt_register_template(
-        str(sample_deck), name="Test Corporate", version="2.0"
+        str(template_source), name="Test Corporate", version="2.0"
     )["template_id"]
 
 
@@ -52,8 +69,8 @@ def test_register_parses_design_system(template_id):
     assert by_name["Title and Content"]["capacity"]["body_bullets"] > 3
 
 
-def test_duplicate_registration_is_idempotent(template_id, sample_deck):
-    again = server.ppt_register_template(str(sample_deck))
+def test_duplicate_registration_is_idempotent(template_id, template_source):
+    again = server.ppt_register_template(str(template_source))
     assert again["template_id"] == template_id
     assert again["already_registered"] is True
 
