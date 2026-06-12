@@ -19,6 +19,7 @@ from . import compliance
 from . import format as fmt
 from . import manifest as deck_manifest
 from . import reader, recommend, retarget, writer
+from .icons import IconLibrary
 from .errors import PptMcpError
 from .render import RenderService, diff_images
 from .styles import StyleProfileRegistry
@@ -46,6 +47,7 @@ sessions = SessionManager(store)
 registry = TemplateRegistry(store)
 renderer = RenderService(store)
 styles = StyleProfileRegistry(store)
+icon_library = IconLibrary(store)
 
 READ_ONLY = ToolAnnotations(readOnlyHint=True, openWorldHint=False)
 MUTATING = ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False)
@@ -900,6 +902,122 @@ def ppt_fill_image_placeholder(
             slide_index=slide_index, shape_id=picture.shape_id)
     return {"applied": True, "shape_id": picture.shape_id,
             "status": "generated" if record else "filled (no manifest record)"}
+
+
+# -- icons (§10.8, scoped) -----------------------------------------------------------
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_list_icon_sets() -> dict[str, Any]:
+    """Available icon sets: the vendored Material Symbols set (Apache 2.0,
+    theme-tintable) plus any sets harvested from PowerPoint files."""
+    return {"icon_sets": icon_library.list_sets()}
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_search_icons(
+    query: Annotated[str, Field(description="Concept to find, e.g. 'risk', 'growth', 'security'")],
+    set_id: Annotated[str | None, Field(description="Restrict to one set; default: all")] = None,
+    limit: Annotated[int, Field(ge=1, le=50)] = 12,
+) -> dict[str, Any]:
+    """Fuzzy-search icons by name and tags across the local icon sets."""
+    results = icon_library.search(query, set_id=set_id, limit=limit)
+    if not results:
+        return {"query": query, "results": [],
+                "hint": "No match >= threshold. Try a broader concept, or harvest "
+                        "more icons with ppt_harvest_icons."}
+    return {"query": query, "results": results}
+
+
+def _resolve_icon_color(prs, color: str) -> str:
+    if color.startswith("#"):
+        return color
+    theme = extract_theme_from_master(prs.slide_masters[0])
+    palette = theme["color_scheme"]
+    if color in palette:
+        return palette[color]
+    raise PptMcpError(
+        f"'{color}' is neither #RRGGBB nor a theme slot. Theme slots: "
+        f"{', '.join(palette)}."
+    )
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_insert_icon(
+    deck_id: str,
+    slide_index: Annotated[int, Field(ge=1)],
+    icon_id: str,
+    set_id: str = "material",
+    left_in: Annotated[float, Field(description="Left edge in inches")] = 0.5,
+    top_in: Annotated[float, Field(description="Top edge in inches")] = 0.5,
+    size_in: Annotated[float, Field(gt=0, le=10, description="Icon width in inches")] = 0.6,
+    color: Annotated[
+        str, Field(description="#RRGGBB or a theme slot (dk1, accent1, ...). "
+                               "Applies to tintable (SVG) icons only."),
+    ] = "dk1",
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Insert an icon as a picture. SVG icons are rendered transparent and
+    tinted with the deck's theme color (default: text color dk1); harvested
+    raster icons are inserted unchanged."""
+    from pptx.util import Inches
+
+    prs = _prs(deck_id)
+    slide = reader.get_slide_by_index(prs, slide_index)
+    color_hex = _resolve_icon_color(prs, color)
+    icon_meta, _ = icon_library.get_icon(set_id, icon_id)
+    plan = {"slide_index": slide_index, "icon": f"{set_id}/{icon_id}",
+            "color": color_hex if icon_meta["format"] == "svg" else "as-is",
+            "at": [left_in, top_in], "size_in": size_in}
+    if dry_run:
+        return {"applied": False, "plan": plan}
+    px = max(48, int(size_in * 384))
+    png_path, tinted = icon_library.render_png(set_id, icon_id, color_hex, px)
+    from PIL import Image as PILImage
+
+    with PILImage.open(png_path) as im:
+        aspect = im.size[1] / im.size[0]
+    picture = slide.shapes.add_picture(
+        str(png_path), Inches(left_in), Inches(top_in),
+        width=Inches(size_in), height=Inches(size_in * aspect),
+    )
+    picture._element._nvXxPr.cNvPr.set("descr", f"{icon_meta['name']} icon")
+    _commit(deck_id, prs, "ppt_insert_icon", slide_index=slide_index,
+            icon=f"{set_id}/{icon_id}")
+    return {"applied": True, "plan": plan, "shape_id": picture.shape_id,
+            "tinted": tinted}
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_harvest_icons(
+    set_name: Annotated[str, Field(description="Name for the local icon set (created or extended)")],
+    path: Annotated[
+        str | None, Field(description="A .pptx/.potx file to harvest from")
+    ] = None,
+    deck_id: Annotated[
+        str | None, Field(description="...or an open deck to harvest from")
+    ] = None,
+    min_px: Annotated[int, Field(ge=1, description="Smallest raster size to accept (longest edge)")] = 16,
+    max_px: Annotated[int, Field(ge=16, description="Largest raster size to accept — filters out photos")] = 600,
+) -> dict[str, Any]:
+    """Harvest icon-sized images (PNG/JPG/GIF/BMP and all SVG media) out of a
+    PowerPoint file into a reusable local icon set. Names come from the shape
+    names in the source where available; duplicates are skipped by content
+    hash. Pass exactly one of path / deck_id."""
+    if (path is None) == (deck_id is None):
+        raise PptMcpError("Pass exactly one of path or deck_id.")
+    if path is not None:
+        source = Path(path).expanduser().resolve()
+        if not source.is_file():
+            raise PptMcpError(f"File not found: '{source}'.")
+        if source.suffix.lower() not in (".pptx", ".potx"):
+            raise PptMcpError(f"Unsupported file type '{source.suffix}'.")
+    else:
+        source = sessions.get(deck_id).working_path
+    result = icon_library.harvest_from_pptx(source, set_name, min_px=min_px, max_px=max_px)
+    return {"source": str(source), **result,
+            "note": "Harvested icons are inserted as-is (no theme tinting) unless "
+                    "they are SVG. Clear usage rights before reusing them elsewhere."}
 
 
 # -- compliance (§10.5) ------------------------------------------------------------

@@ -8,9 +8,10 @@ no network calls, ever. See [DESIGN.md](DESIGN.md) for the full design.
 
 ## Status
 
-**M0–M5 done:** deck sessions, reading, placeholder-first authoring, template
-intelligence, compliance validation, rendering, brand-governed image
-placeholders, template application, and the eval suite.
+**M0–M5 done, plus the icon library:** deck sessions, reading,
+placeholder-first authoring, template intelligence, compliance validation,
+rendering, brand-governed image placeholders, template application, the eval
+suite, and offline icons (vendored + harvested).
 
 | Tool | What it does |
 |---|---|
@@ -44,6 +45,9 @@ placeholders, template application, and the eval suite.
 | `ppt_fill_image_placeholder` | Insert the externally generated image; status flips to `generated` |
 | `ppt_apply_template` | Re-target a deck onto a template: per-slide fidelity report (dry-run default), placeholder content migrated, orphans carried over + flagged, auto-validation |
 | `ppt_extract_template_from_deck` | Recover a design system from a finished deck as a derived template with layout-usage stats |
+| `ppt_list_icon_sets` / `ppt_search_icons` | 171 vendored Material Symbols (Apache 2.0) + your harvested sets, fuzzy search by name/tags |
+| `ppt_insert_icon` | Insert tinted to a theme color (transparent PNG, anti-aliased), fully offline |
+| `ppt_harvest_icons` | Pull icon-sized images (and SVGs) out of any .pptx into a reusable local set — dedupe by content hash, names from shape names |
 
 Rendering needs LibreOffice (`winget install TheDocumentFoundation.LibreOffice`);
 everything else works without it. Renders are validation evidence — PowerPoint
@@ -57,8 +61,8 @@ A companion skill for MCP clients lives in
 
 The 10-question agent eval suite lives in [evals/](evals/README.md).
 
-Next per the [roadmap](DESIGN.md#14-milestones): M6 — built-in starter
-templates, slide patterns (business forms), vendored icon sets.
+Remaining from the [roadmap](DESIGN.md#14-milestones) (M6, deferred): built-in
+starter templates and slide patterns (business forms).
 
 ## Quickstart
 

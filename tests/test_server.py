@@ -51,6 +51,10 @@ EXPECTED_TOOLS = {
     "ppt_fill_image_placeholder",
     "ppt_apply_template",
     "ppt_extract_template_from_deck",
+    "ppt_list_icon_sets",
+    "ppt_search_icons",
+    "ppt_insert_icon",
+    "ppt_harvest_icons",
 }
 
 

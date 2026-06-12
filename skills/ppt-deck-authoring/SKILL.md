@@ -57,6 +57,16 @@ Decks should not get random stock photos. The governed path:
 4. Generate the image with whatever tool the user uses, then
    `ppt_fill_image_placeholder(deck, slide, shape_ref, image_path)`.
 
+## Icons
+
+- `ppt_search_icons("risk")` finds icons in the vendored Material set and any
+  harvested sets; `ppt_insert_icon` places them tinted with a theme color
+  (default dk1 — pass `color="accent1"` etc. or a hex).
+- When the user's existing decks contain their corporate icon language,
+  harvest it once: `ppt_harvest_icons(set_name, path=...)` — then those icons
+  are searchable and reusable across decks. Mind usage rights for harvested
+  artwork.
+
 ## What to avoid
 
 - `allow_freeform=true` exists for table/image/chart placement but bypasses

@@ -525,6 +525,10 @@ markers). Bundled, license-clean, offline:
   Architecture supports additional sets (e.g. Lucide/ISC, Tabler/MIT) dropped
   into the assets dir; each set ships SVGs + `index.json` (name, synonyms,
   tags, category) + its LICENSE/attribution file.
+- **Harvested sets:** `ppt_harvest_icons` imports icon-sized images (raster
+  within a size window, all SVG media) out of existing PowerPoint files into
+  a local user set — dedupe by content hash, icon names derived from the
+  source's shape names, provenance + rights note recorded in the set index.
 - **Search:** `ppt_search_icons` does fuzzy name/tag lookup (rapidfuzz over
   the index) and returns small preview renders.
 - **Insertion pipeline:** recolor the SVG (Material/Lucide icons are

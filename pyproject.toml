@@ -11,6 +11,8 @@ dependencies = [
     "pydantic>=2.7",
     "rapidfuzz>=3.14.5",
     "pypdfium2>=5.9.0",
+    "svglib>=1.6.0",
+    "reportlab>=4.5.1",
 ]
 
 [project.scripts]

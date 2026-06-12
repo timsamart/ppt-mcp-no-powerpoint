@@ -1,0 +1,1949 @@
+{
+ "set_id": "material",
+ "name": "Material Symbols (outlined, curated business subset)",
+ "license": "Apache-2.0",
+ "recolorable": true,
+ "icons": [
+  {
+   "id": "account_balance",
+   "name": "account balance",
+   "tags": [
+    "bank",
+    "government",
+    "institution",
+    "finance"
+   ],
+   "file": "icons/account_balance.svg",
+   "format": "svg"
+  },
+  {
+   "id": "account_tree",
+   "name": "account tree",
+   "tags": [
+    "org chart",
+    "tree",
+    "structure",
+    "dependencies"
+   ],
+   "file": "icons/account_tree.svg",
+   "format": "svg"
+  },
+  {
+   "id": "add_circle",
+   "name": "add circle",
+   "tags": [
+    "plus",
+    "add",
+    "new",
+    "create"
+   ],
+   "file": "icons/add_circle.svg",
+   "format": "svg"
+  },
+  {
+   "id": "admin_panel_settings",
+   "name": "admin panel settings",
+   "tags": [
+    "admin",
+    "access control",
+    "permissions"
+   ],
+   "file": "icons/admin_panel_settings.svg",
+   "format": "svg"
+  },
+  {
+   "id": "alt_route",
+   "name": "alt route",
+   "tags": [
+    "alternative",
+    "detour",
+    "option",
+    "scenario"
+   ],
+   "file": "icons/alt_route.svg",
+   "format": "svg"
+  },
+  {
+   "id": "analytics",
+   "name": "analytics",
+   "tags": [
+    "analysis",
+    "data",
+    "metrics"
+   ],
+   "file": "icons/analytics.svg",
+   "format": "svg"
+  },
+  {
+   "id": "apartment",
+   "name": "apartment",
+   "tags": [
+    "building",
+    "office",
+    "company",
+    "headquarters"
+   ],
+   "file": "icons/apartment.svg",
+   "format": "svg"
+  },
+  {
+   "id": "api",
+   "name": "api",
+   "tags": [
+    "interface",
+    "integration",
+    "endpoint"
+   ],
+   "file": "icons/api.svg",
+   "format": "svg"
+  },
+  {
+   "id": "approval",
+   "name": "approval",
+   "tags": [
+    "stamp",
+    "approve",
+    "sign off"
+   ],
+   "file": "icons/approval.svg",
+   "format": "svg"
+  },
+  {
+   "id": "arrow_back",
+   "name": "arrow back",
+   "tags": [
+    "previous",
+    "left",
+    "return"
+   ],
+   "file": "icons/arrow_back.svg",
+   "format": "svg"
+  },
+  {
+   "id": "arrow_downward",
+   "name": "arrow downward",
+   "tags": [
+    "down",
+    "decrease",
+    "south"
+   ],
+   "file": "icons/arrow_downward.svg",
+   "format": "svg"
+  },
+  {
+   "id": "arrow_forward",
+   "name": "arrow forward",
+   "tags": [
+    "next",
+    "right",
+    "continue"
+   ],
+   "file": "icons/arrow_forward.svg",
+   "format": "svg"
+  },
+  {
+   "id": "arrow_upward",
+   "name": "arrow upward",
+   "tags": [
+    "up",
+    "increase",
+    "north"
+   ],
+   "file": "icons/arrow_upward.svg",
+   "format": "svg"
+  },
+  {
+   "id": "article",
+   "name": "article",
+   "tags": [
+    "text",
+    "news",
+    "blog",
+    "documentation"
+   ],
+   "file": "icons/article.svg",
+   "format": "svg"
+  },
+  {
+   "id": "assignment",
+   "name": "assignment",
+   "tags": [
+    "document task",
+    "clipboard",
+    "assignment"
+   ],
+   "file": "icons/assignment.svg",
+   "format": "svg"
+  },
+  {
+   "id": "attach_file",
+   "name": "attach file",
+   "tags": [
+    "attachment",
+    "paperclip",
+    "file"
+   ],
+   "file": "icons/attach_file.svg",
+   "format": "svg"
+  },
+  {
+   "id": "attach_money",
+   "name": "attach money",
+   "tags": [
+    "dollar",
+    "cost",
+    "price",
+    "revenue"
+   ],
+   "file": "icons/attach_money.svg",
+   "format": "svg"
+  },
+  {
+   "id": "auto_awesome",
+   "name": "auto awesome",
+   "tags": [
+    "ai",
+    "magic",
+    "sparkle",
+    "genai",
+    "generative"
+   ],
+   "file": "icons/auto_awesome.svg",
+   "format": "svg"
+  },
+  {
+   "id": "autorenew",
+   "name": "autorenew",
+   "tags": [
+    "cycle",
+    "recurring",
+    "iteration",
+    "agile"
+   ],
+   "file": "icons/autorenew.svg",
+   "format": "svg"
+  },
+  {
+   "id": "badge",
+   "name": "badge",
+   "tags": [
+    "id",
+    "identity",
+    "employee card"
+   ],
+   "file": "icons/badge.svg",
+   "format": "svg"
+  },
+  {
+   "id": "balance",
+   "name": "balance",
+   "tags": [
+    "justice",
+    "scales",
+    "fairness",
+    "tradeoff",
+    "governance"
+   ],
+   "file": "icons/balance.svg",
+   "format": "svg"
+  },
+  {
+   "id": "bar_chart",
+   "name": "bar chart",
+   "tags": [
+    "chart",
+    "graph",
+    "statistics",
+    "report"
+   ],
+   "file": "icons/bar_chart.svg",
+   "format": "svg"
+  },
+  {
+   "id": "block",
+   "name": "block",
+   "tags": [
+    "blocked",
+    "forbidden",
+    "stop"
+   ],
+   "file": "icons/block.svg",
+   "format": "svg"
+  },
+  {
+   "id": "bolt",
+   "name": "bolt",
+   "tags": [
+    "energy",
+    "power",
+    "fast",
+    "electric"
+   ],
+   "file": "icons/bolt.svg",
+   "format": "svg"
+  },
+  {
+   "id": "bug_report",
+   "name": "bug report",
+   "tags": [
+    "bug",
+    "defect",
+    "issue",
+    "testing"
+   ],
+   "file": "icons/bug_report.svg",
+   "format": "svg"
+  },
+  {
+   "id": "build",
+   "name": "build",
+   "tags": [
+    "wrench",
+    "tool",
+    "configuration",
+    "maintenance"
+   ],
+   "file": "icons/build.svg",
+   "format": "svg"
+  },
+  {
+   "id": "business_center",
+   "name": "business center",
+   "tags": [
+    "briefcase",
+    "business",
+    "portfolio"
+   ],
+   "file": "icons/business_center.svg",
+   "format": "svg"
+  },
+  {
+   "id": "calendar_month",
+   "name": "calendar month",
+   "tags": [
+    "calendar",
+    "date",
+    "planning",
+    "schedule"
+   ],
+   "file": "icons/calendar_month.svg",
+   "format": "svg"
+  },
+  {
+   "id": "call",
+   "name": "call",
+   "tags": [
+    "phone",
+    "telephone",
+    "contact"
+   ],
+   "file": "icons/call.svg",
+   "format": "svg"
+  },
+  {
+   "id": "call_split",
+   "name": "call split",
+   "tags": [
+    "split",
+    "branch",
+    "fork",
+    "divide"
+   ],
+   "file": "icons/call_split.svg",
+   "format": "svg"
+  },
+  {
+   "id": "campaign",
+   "name": "campaign",
+   "tags": [
+    "announcement",
+    "megaphone",
+    "marketing",
+    "communication"
+   ],
+   "file": "icons/campaign.svg",
+   "format": "svg"
+  },
+  {
+   "id": "cancel",
+   "name": "cancel",
+   "tags": [
+    "fail",
+    "rejected",
+    "no"
+   ],
+   "file": "icons/cancel.svg",
+   "format": "svg"
+  },
+  {
+   "id": "chart_data",
+   "name": "chart data",
+   "tags": [
+    "insight",
+    "spark",
+    "discovery"
+   ],
+   "file": "icons/chart_data.svg",
+   "format": "svg"
+  },
+  {
+   "id": "chat",
+   "name": "chat",
+   "tags": [
+    "conversation",
+    "discussion",
+    "messaging"
+   ],
+   "file": "icons/chat.svg",
+   "format": "svg"
+  },
+  {
+   "id": "check_circle",
+   "name": "check circle",
+   "tags": [
+    "done",
+    "success",
+    "ok",
+    "complete"
+   ],
+   "file": "icons/check_circle.svg",
+   "format": "svg"
+  },
+  {
+   "id": "checklist",
+   "name": "checklist",
+   "tags": [
+    "list",
+    "requirements",
+    "criteria"
+   ],
+   "file": "icons/checklist.svg",
+   "format": "svg"
+  },
+  {
+   "id": "chevron_right",
+   "name": "chevron right",
+   "tags": [
+    "next",
+    "expand",
+    "breadcrumb"
+   ],
+   "file": "icons/chevron_right.svg",
+   "format": "svg"
+  },
+  {
+   "id": "cloud",
+   "name": "cloud",
+   "tags": [
+    "cloud computing",
+    "saas",
+    "hosting"
+   ],
+   "file": "icons/cloud.svg",
+   "format": "svg"
+  },
+  {
+   "id": "cloud_done",
+   "name": "cloud done",
+   "tags": [
+    "cloud ready",
+    "migrated"
+   ],
+   "file": "icons/cloud_done.svg",
+   "format": "svg"
+  },
+  {
+   "id": "cloud_upload",
+   "name": "cloud upload",
+   "tags": [
+    "upload",
+    "migration to cloud"
+   ],
+   "file": "icons/cloud_upload.svg",
+   "format": "svg"
+  },
+  {
+   "id": "code",
+   "name": "code",
+   "tags": [
+    "development",
+    "programming",
+    "software"
+   ],
+   "file": "icons/code.svg",
+   "format": "svg"
+  },
+  {
+   "id": "compare_arrows",
+   "name": "compare arrows",
+   "tags": [
+    "compare",
+    "versus",
+    "benchmark"
+   ],
+   "file": "icons/compare_arrows.svg",
+   "format": "svg"
+  },
+  {
+   "id": "computer",
+   "name": "computer",
+   "tags": [
+    "desktop",
+    "workstation",
+    "pc"
+   ],
+   "file": "icons/computer.svg",
+   "format": "svg"
+  },
+  {
+   "id": "content_copy",
+   "name": "content copy",
+   "tags": [
+    "copy",
+    "duplicate",
+    "clone"
+   ],
+   "file": "icons/content_copy.svg",
+   "format": "svg"
+  },
+  {
+   "id": "credit_card",
+   "name": "credit card",
+   "tags": [
+    "card",
+    "payment",
+    "billing"
+   ],
+   "file": "icons/credit_card.svg",
+   "format": "svg"
+  },
+  {
+   "id": "dashboard",
+   "name": "dashboard",
+   "tags": [
+    "overview",
+    "panel",
+    "kpi"
+   ],
+   "file": "icons/dashboard.svg",
+   "format": "svg"
+  },
+  {
+   "id": "database",
+   "name": "database",
+   "tags": [
+    "data",
+    "sql",
+    "repository"
+   ],
+   "file": "icons/database.svg",
+   "format": "svg"
+  },
+  {
+   "id": "delete",
+   "name": "delete",
+   "tags": [
+    "trash",
+    "bin",
+    "remove",
+    "discard"
+   ],
+   "file": "icons/delete.svg",
+   "format": "svg"
+  },
+  {
+   "id": "description",
+   "name": "description",
+   "tags": [
+    "document",
+    "file",
+    "page",
+    "report"
+   ],
+   "file": "icons/description.svg",
+   "format": "svg"
+  },
+  {
+   "id": "devices",
+   "name": "devices",
+   "tags": [
+    "multi device",
+    "responsive",
+    "hardware"
+   ],
+   "file": "icons/devices.svg",
+   "format": "svg"
+  },
+  {
+   "id": "diversity_3",
+   "name": "diversity 3",
+   "tags": [
+    "diversity",
+    "inclusion",
+    "collaboration circle"
+   ],
+   "file": "icons/diversity_3.svg",
+   "format": "svg"
+  },
+  {
+   "id": "dns",
+   "name": "dns",
+   "tags": [
+    "server",
+    "infrastructure",
+    "hosting"
+   ],
+   "file": "icons/dns.svg",
+   "format": "svg"
+  },
+  {
+   "id": "do_not_disturb_on",
+   "name": "do not disturb on",
+   "tags": [
+    "minus",
+    "remove",
+    "reduce"
+   ],
+   "file": "icons/do_not_disturb_on.svg",
+   "format": "svg"
+  },
+  {
+   "id": "download",
+   "name": "download",
+   "tags": [
+    "save",
+    "export",
+    "get"
+   ],
+   "file": "icons/download.svg",
+   "format": "svg"
+  },
+  {
+   "id": "draw",
+   "name": "draw",
+   "tags": [
+    "design",
+    "sketch",
+    "creative"
+   ],
+   "file": "icons/draw.svg",
+   "format": "svg"
+  },
+  {
+   "id": "eco",
+   "name": "eco",
+   "tags": [
+    "sustainability",
+    "green",
+    "leaf",
+    "environment",
+    "esg"
+   ],
+   "file": "icons/eco.svg",
+   "format": "svg"
+  },
+  {
+   "id": "edit",
+   "name": "edit",
+   "tags": [
+    "pencil",
+    "modify",
+    "write"
+   ],
+   "file": "icons/edit.svg",
+   "format": "svg"
+  },
+  {
+   "id": "engineering",
+   "name": "engineering",
+   "tags": [
+    "engineer",
+    "technical",
+    "construction worker"
+   ],
+   "file": "icons/engineering.svg",
+   "format": "svg"
+  },
+  {
+   "id": "error",
+   "name": "error",
+   "tags": [
+    "problem",
+    "issue",
+    "critical"
+   ],
+   "file": "icons/error.svg",
+   "format": "svg"
+  },
+  {
+   "id": "euro",
+   "name": "euro",
+   "tags": [
+    "currency",
+    "cost",
+    "price euro"
+   ],
+   "file": "icons/euro.svg",
+   "format": "svg"
+  },
+  {
+   "id": "event",
+   "name": "event",
+   "tags": [
+    "appointment",
+    "meeting",
+    "date"
+   ],
+   "file": "icons/event.svg",
+   "format": "svg"
+  },
+  {
+   "id": "expand_more",
+   "name": "expand more",
+   "tags": [
+    "dropdown",
+    "more",
+    "down chevron"
+   ],
+   "file": "icons/expand_more.svg",
+   "format": "svg"
+  },
+  {
+   "id": "fact_check",
+   "name": "fact check",
+   "tags": [
+    "verify",
+    "review",
+    "validation",
+    "audit"
+   ],
+   "file": "icons/fact_check.svg",
+   "format": "svg"
+  },
+  {
+   "id": "factory",
+   "name": "factory",
+   "tags": [
+    "manufacturing",
+    "plant",
+    "industry",
+    "production"
+   ],
+   "file": "icons/factory.svg",
+   "format": "svg"
+  },
+  {
+   "id": "favorite",
+   "name": "favorite",
+   "tags": [
+    "heart",
+    "like",
+    "love",
+    "engagement"
+   ],
+   "file": "icons/favorite.svg",
+   "format": "svg"
+  },
+  {
+   "id": "filter_alt",
+   "name": "filter alt",
+   "tags": [
+    "filter",
+    "funnel",
+    "refine"
+   ],
+   "file": "icons/filter_alt.svg",
+   "format": "svg"
+  },
+  {
+   "id": "fingerprint",
+   "name": "fingerprint",
+   "tags": [
+    "biometric",
+    "identity",
+    "unique"
+   ],
+   "file": "icons/fingerprint.svg",
+   "format": "svg"
+  },
+  {
+   "id": "flag",
+   "name": "flag",
+   "tags": [
+    "milestone",
+    "marker",
+    "goal"
+   ],
+   "file": "icons/flag.svg",
+   "format": "svg"
+  },
+  {
+   "id": "flag_circle",
+   "name": "flag circle",
+   "tags": [
+    "finish",
+    "goal flag",
+    "milestone circle"
+   ],
+   "file": "icons/flag_circle.svg",
+   "format": "svg"
+  },
+  {
+   "id": "folder",
+   "name": "folder",
+   "tags": [
+    "directory",
+    "files",
+    "archive"
+   ],
+   "file": "icons/folder.svg",
+   "format": "svg"
+  },
+  {
+   "id": "forum",
+   "name": "forum",
+   "tags": [
+    "community",
+    "dialogue",
+    "exchange"
+   ],
+   "file": "icons/forum.svg",
+   "format": "svg"
+  },
+  {
+   "id": "gavel",
+   "name": "gavel",
+   "tags": [
+    "legal",
+    "law",
+    "compliance",
+    "court",
+    "decision"
+   ],
+   "file": "icons/gavel.svg",
+   "format": "svg"
+  },
+  {
+   "id": "group",
+   "name": "group",
+   "tags": [
+    "team",
+    "people",
+    "pair"
+   ],
+   "file": "icons/group.svg",
+   "format": "svg"
+  },
+  {
+   "id": "groups",
+   "name": "groups",
+   "tags": [
+    "organization",
+    "community",
+    "audience",
+    "workforce"
+   ],
+   "file": "icons/groups.svg",
+   "format": "svg"
+  },
+  {
+   "id": "handshake",
+   "name": "handshake",
+   "tags": [
+    "partnership",
+    "agreement",
+    "deal",
+    "cooperation"
+   ],
+   "file": "icons/handshake.svg",
+   "format": "svg"
+  },
+  {
+   "id": "health_and_safety",
+   "name": "health and safety",
+   "tags": [
+    "safety",
+    "health",
+    "care",
+    "protection"
+   ],
+   "file": "icons/health_and_safety.svg",
+   "format": "svg"
+  },
+  {
+   "id": "help",
+   "name": "help",
+   "tags": [
+    "question",
+    "support",
+    "faq"
+   ],
+   "file": "icons/help.svg",
+   "format": "svg"
+  },
+  {
+   "id": "history",
+   "name": "history",
+   "tags": [
+    "past",
+    "log",
+    "previous",
+    "undo"
+   ],
+   "file": "icons/history.svg",
+   "format": "svg"
+  },
+  {
+   "id": "home",
+   "name": "home",
+   "tags": [
+    "house",
+    "main",
+    "start"
+   ],
+   "file": "icons/home.svg",
+   "format": "svg"
+  },
+  {
+   "id": "hourglass_top",
+   "name": "hourglass top",
+   "tags": [
+    "waiting",
+    "duration",
+    "time running"
+   ],
+   "file": "icons/hourglass_top.svg",
+   "format": "svg"
+  },
+  {
+   "id": "hub",
+   "name": "hub",
+   "tags": [
+    "network",
+    "center",
+    "ecosystem",
+    "platform"
+   ],
+   "file": "icons/hub.svg",
+   "format": "svg"
+  },
+  {
+   "id": "info",
+   "name": "info",
+   "tags": [
+    "information",
+    "note"
+   ],
+   "file": "icons/info.svg",
+   "format": "svg"
+  },
+  {
+   "id": "inventory_2",
+   "name": "inventory 2",
+   "tags": [
+    "inventory",
+    "stock",
+    "warehouse",
+    "box"
+   ],
+   "file": "icons/inventory_2.svg",
+   "format": "svg"
+  },
+  {
+   "id": "key",
+   "name": "key",
+   "tags": [
+    "access",
+    "credential",
+    "password",
+    "license"
+   ],
+   "file": "icons/key.svg",
+   "format": "svg"
+  },
+  {
+   "id": "lan",
+   "name": "lan",
+   "tags": [
+    "network",
+    "topology",
+    "intranet"
+   ],
+   "file": "icons/lan.svg",
+   "format": "svg"
+  },
+  {
+   "id": "language",
+   "name": "language",
+   "tags": [
+    "web",
+    "www",
+    "international",
+    "translation"
+   ],
+   "file": "icons/language.svg",
+   "format": "svg"
+  },
+  {
+   "id": "leaderboard",
+   "name": "leaderboard",
+   "tags": [
+    "ranking",
+    "comparison",
+    "podium"
+   ],
+   "file": "icons/leaderboard.svg",
+   "format": "svg"
+  },
+  {
+   "id": "library_books",
+   "name": "library books",
+   "tags": [
+    "library",
+    "knowledge base",
+    "collection"
+   ],
+   "file": "icons/library_books.svg",
+   "format": "svg"
+  },
+  {
+   "id": "lightbulb",
+   "name": "lightbulb",
+   "tags": [
+    "idea",
+    "innovation",
+    "insight",
+    "creativity"
+   ],
+   "file": "icons/lightbulb.svg",
+   "format": "svg"
+  },
+  {
+   "id": "lightbulb_circle",
+   "name": "lightbulb circle",
+   "tags": [
+    "tip",
+    "hint",
+    "innovation bulb"
+   ],
+   "file": "icons/lightbulb_circle.svg",
+   "format": "svg"
+  },
+  {
+   "id": "link",
+   "name": "link",
+   "tags": [
+    "url",
+    "connection",
+    "chain"
+   ],
+   "file": "icons/link.svg",
+   "format": "svg"
+  },
+  {
+   "id": "local_shipping",
+   "name": "local shipping",
+   "tags": [
+    "logistics",
+    "delivery",
+    "truck",
+    "transport"
+   ],
+   "file": "icons/local_shipping.svg",
+   "format": "svg"
+  },
+  {
+   "id": "location_on",
+   "name": "location on",
+   "tags": [
+    "pin",
+    "place",
+    "map marker",
+    "site"
+   ],
+   "file": "icons/location_on.svg",
+   "format": "svg"
+  },
+  {
+   "id": "lock",
+   "name": "lock",
+   "tags": [
+    "secure",
+    "private",
+    "confidential",
+    "encryption"
+   ],
+   "file": "icons/lock.svg",
+   "format": "svg"
+  },
+  {
+   "id": "lock_open",
+   "name": "lock open",
+   "tags": [
+    "unlocked",
+    "access granted",
+    "open"
+   ],
+   "file": "icons/lock_open.svg",
+   "format": "svg"
+  },
+  {
+   "id": "mail",
+   "name": "mail",
+   "tags": [
+    "email",
+    "message",
+    "envelope",
+    "contact"
+   ],
+   "file": "icons/mail.svg",
+   "format": "svg"
+  },
+  {
+   "id": "map",
+   "name": "map",
+   "tags": [
+    "geography",
+    "navigation",
+    "territory"
+   ],
+   "file": "icons/map.svg",
+   "format": "svg"
+  },
+  {
+   "id": "medical_services",
+   "name": "medical services",
+   "tags": [
+    "medical",
+    "healthcare",
+    "first aid"
+   ],
+   "file": "icons/medical_services.svg",
+   "format": "svg"
+  },
+  {
+   "id": "memory",
+   "name": "memory",
+   "tags": [
+    "chip",
+    "processor",
+    "hardware",
+    "compute",
+    "ai chip"
+   ],
+   "file": "icons/memory.svg",
+   "format": "svg"
+  },
+  {
+   "id": "menu_book",
+   "name": "menu book",
+   "tags": [
+    "handbook",
+    "manual",
+    "guide",
+    "documentation"
+   ],
+   "file": "icons/menu_book.svg",
+   "format": "svg"
+  },
+  {
+   "id": "merge",
+   "name": "merge",
+   "tags": [
+    "merge",
+    "consolidate",
+    "combine"
+   ],
+   "file": "icons/merge.svg",
+   "format": "svg"
+  },
+  {
+   "id": "military_tech",
+   "name": "military tech",
+   "tags": [
+    "medal",
+    "honor",
+    "rank"
+   ],
+   "file": "icons/military_tech.svg",
+   "format": "svg"
+  },
+  {
+   "id": "monitoring",
+   "name": "monitoring",
+   "tags": [
+    "observability",
+    "dashboard",
+    "tracking"
+   ],
+   "file": "icons/monitoring.svg",
+   "format": "svg"
+  },
+  {
+   "id": "network_intelligence",
+   "name": "network intelligence",
+   "tags": [
+    "ai network",
+    "machine learning",
+    "neural"
+   ],
+   "file": "icons/network_intelligence.svg",
+   "format": "svg"
+  },
+  {
+   "id": "notifications",
+   "name": "notifications",
+   "tags": [
+    "bell",
+    "alert",
+    "reminder"
+   ],
+   "file": "icons/notifications.svg",
+   "format": "svg"
+  },
+  {
+   "id": "open_in_new",
+   "name": "open in new",
+   "tags": [
+    "external",
+    "new window",
+    "link out"
+   ],
+   "file": "icons/open_in_new.svg",
+   "format": "svg"
+  },
+  {
+   "id": "payments",
+   "name": "payments",
+   "tags": [
+    "payment",
+    "money",
+    "transaction"
+   ],
+   "file": "icons/payments.svg",
+   "format": "svg"
+  },
+  {
+   "id": "pending",
+   "name": "pending",
+   "tags": [
+    "waiting",
+    "in progress"
+   ],
+   "file": "icons/pending.svg",
+   "format": "svg"
+  },
+  {
+   "id": "person",
+   "name": "person",
+   "tags": [
+    "user",
+    "individual",
+    "employee"
+   ],
+   "file": "icons/person.svg",
+   "format": "svg"
+  },
+  {
+   "id": "person_add",
+   "name": "person add",
+   "tags": [
+    "hire",
+    "recruit",
+    "onboarding"
+   ],
+   "file": "icons/person_add.svg",
+   "format": "svg"
+  },
+  {
+   "id": "pie_chart",
+   "name": "pie chart",
+   "tags": [
+    "share",
+    "distribution",
+    "segments"
+   ],
+   "file": "icons/pie_chart.svg",
+   "format": "svg"
+  },
+  {
+   "id": "policy",
+   "name": "policy",
+   "tags": [
+    "governance",
+    "rules",
+    "compliance shield"
+   ],
+   "file": "icons/policy.svg",
+   "format": "svg"
+  },
+  {
+   "id": "precision_manufacturing",
+   "name": "precision manufacturing",
+   "tags": [
+    "robot arm",
+    "automation",
+    "industry 4.0"
+   ],
+   "file": "icons/precision_manufacturing.svg",
+   "format": "svg"
+  },
+  {
+   "id": "priority_high",
+   "name": "priority high",
+   "tags": [
+    "urgent",
+    "important",
+    "exclamation"
+   ],
+   "file": "icons/priority_high.svg",
+   "format": "svg"
+  },
+  {
+   "id": "psychology",
+   "name": "psychology",
+   "tags": [
+    "mind",
+    "brain",
+    "behavior",
+    "ai thinking"
+   ],
+   "file": "icons/psychology.svg",
+   "format": "svg"
+  },
+  {
+   "id": "public",
+   "name": "public",
+   "tags": [
+    "globe",
+    "world",
+    "global",
+    "international"
+   ],
+   "file": "icons/public.svg",
+   "format": "svg"
+  },
+  {
+   "id": "published_with_changes",
+   "name": "published with changes",
+   "tags": [
+    "change",
+    "deployed",
+    "updated cycle"
+   ],
+   "file": "icons/published_with_changes.svg",
+   "format": "svg"
+  },
+  {
+   "id": "query_stats",
+   "name": "query stats",
+   "tags": [
+    "investigate",
+    "analysis",
+    "statistics search"
+   ],
+   "file": "icons/query_stats.svg",
+   "format": "svg"
+  },
+  {
+   "id": "receipt_long",
+   "name": "receipt long",
+   "tags": [
+    "invoice",
+    "receipt",
+    "billing",
+    "audit trail"
+   ],
+   "file": "icons/receipt_long.svg",
+   "format": "svg"
+  },
+  {
+   "id": "recycling",
+   "name": "recycling",
+   "tags": [
+    "circular economy",
+    "reuse",
+    "sustainable"
+   ],
+   "file": "icons/recycling.svg",
+   "format": "svg"
+  },
+  {
+   "id": "release_alert",
+   "name": "release alert",
+   "tags": [
+    "new",
+    "launch",
+    "release"
+   ],
+   "file": "icons/release_alert.svg",
+   "format": "svg"
+  },
+  {
+   "id": "request_quote",
+   "name": "request quote",
+   "tags": [
+    "quote",
+    "offer",
+    "estimate"
+   ],
+   "file": "icons/request_quote.svg",
+   "format": "svg"
+  },
+  {
+   "id": "rocket_launch",
+   "name": "rocket launch",
+   "tags": [
+    "launch",
+    "startup",
+    "go live",
+    "kickoff"
+   ],
+   "file": "icons/rocket_launch.svg",
+   "format": "svg"
+  },
+  {
+   "id": "route",
+   "name": "route",
+   "tags": [
+    "path",
+    "journey",
+    "roadmap route"
+   ],
+   "file": "icons/route.svg",
+   "format": "svg"
+  },
+  {
+   "id": "router",
+   "name": "router",
+   "tags": [
+    "network device",
+    "gateway",
+    "connectivity"
+   ],
+   "file": "icons/router.svg",
+   "format": "svg"
+  },
+  {
+   "id": "savings",
+   "name": "savings",
+   "tags": [
+    "piggy bank",
+    "save",
+    "fund"
+   ],
+   "file": "icons/savings.svg",
+   "format": "svg"
+  },
+  {
+   "id": "schedule",
+   "name": "schedule",
+   "tags": [
+    "clock",
+    "time",
+    "deadline"
+   ],
+   "file": "icons/schedule.svg",
+   "format": "svg"
+  },
+  {
+   "id": "schema",
+   "name": "schema",
+   "tags": [
+    "structure",
+    "diagram",
+    "hierarchy"
+   ],
+   "file": "icons/schema.svg",
+   "format": "svg"
+  },
+  {
+   "id": "school",
+   "name": "school",
+   "tags": [
+    "education",
+    "training",
+    "learning",
+    "academy"
+   ],
+   "file": "icons/school.svg",
+   "format": "svg"
+  },
+  {
+   "id": "search",
+   "name": "search",
+   "tags": [
+    "find",
+    "magnifier",
+    "discover",
+    "research"
+   ],
+   "file": "icons/search.svg",
+   "format": "svg"
+  },
+  {
+   "id": "security",
+   "name": "security",
+   "tags": [
+    "shield",
+    "protection",
+    "defense"
+   ],
+   "file": "icons/security.svg",
+   "format": "svg"
+  },
+  {
+   "id": "settings",
+   "name": "settings",
+   "tags": [
+    "gear",
+    "configuration",
+    "preferences",
+    "setup"
+   ],
+   "file": "icons/settings.svg",
+   "format": "svg"
+  },
+  {
+   "id": "share",
+   "name": "share",
+   "tags": [
+    "sharing",
+    "distribute",
+    "social"
+   ],
+   "file": "icons/share.svg",
+   "format": "svg"
+  },
+  {
+   "id": "shield",
+   "name": "shield",
+   "tags": [
+    "security",
+    "guard",
+    "safety"
+   ],
+   "file": "icons/shield.svg",
+   "format": "svg"
+  },
+  {
+   "id": "shopping_cart",
+   "name": "shopping cart",
+   "tags": [
+    "purchase",
+    "procurement",
+    "buy",
+    "ecommerce"
+   ],
+   "file": "icons/shopping_cart.svg",
+   "format": "svg"
+  },
+  {
+   "id": "show_chart",
+   "name": "show chart",
+   "tags": [
+    "line chart",
+    "trend",
+    "performance"
+   ],
+   "file": "icons/show_chart.svg",
+   "format": "svg"
+  },
+  {
+   "id": "smart_toy",
+   "name": "smart toy",
+   "tags": [
+    "robot",
+    "bot",
+    "ai assistant",
+    "automation"
+   ],
+   "file": "icons/smart_toy.svg",
+   "format": "svg"
+  },
+  {
+   "id": "smartphone",
+   "name": "smartphone",
+   "tags": [
+    "mobile",
+    "phone",
+    "app"
+   ],
+   "file": "icons/smartphone.svg",
+   "format": "svg"
+  },
+  {
+   "id": "solar_power",
+   "name": "solar power",
+   "tags": [
+    "renewable",
+    "solar",
+    "energy transition"
+   ],
+   "file": "icons/solar_power.svg",
+   "format": "svg"
+  },
+  {
+   "id": "sort",
+   "name": "sort",
+   "tags": [
+    "order",
+    "ranking",
+    "arrange"
+   ],
+   "file": "icons/sort.svg",
+   "format": "svg"
+  },
+  {
+   "id": "speed",
+   "name": "speed",
+   "tags": [
+    "fast",
+    "performance",
+    "velocity",
+    "gauge"
+   ],
+   "file": "icons/speed.svg",
+   "format": "svg"
+  },
+  {
+   "id": "star",
+   "name": "star",
+   "tags": [
+    "favorite",
+    "rating",
+    "highlight"
+   ],
+   "file": "icons/star.svg",
+   "format": "svg"
+  },
+  {
+   "id": "storage",
+   "name": "storage",
+   "tags": [
+    "database",
+    "disk",
+    "server",
+    "data store"
+   ],
+   "file": "icons/storage.svg",
+   "format": "svg"
+  },
+  {
+   "id": "storefront",
+   "name": "storefront",
+   "tags": [
+    "shop",
+    "retail",
+    "store",
+    "market"
+   ],
+   "file": "icons/storefront.svg",
+   "format": "svg"
+  },
+  {
+   "id": "support_agent",
+   "name": "support agent",
+   "tags": [
+    "service",
+    "helpdesk",
+    "call center"
+   ],
+   "file": "icons/support_agent.svg",
+   "format": "svg"
+  },
+  {
+   "id": "swap_horiz",
+   "name": "swap horiz",
+   "tags": [
+    "swap",
+    "exchange",
+    "migration"
+   ],
+   "file": "icons/swap_horiz.svg",
+   "format": "svg"
+  },
+  {
+   "id": "sync",
+   "name": "sync",
+   "tags": [
+    "synchronize",
+    "integration",
+    "exchange"
+   ],
+   "file": "icons/sync.svg",
+   "format": "svg"
+  },
+  {
+   "id": "table_chart",
+   "name": "table chart",
+   "tags": [
+    "table",
+    "spreadsheet",
+    "matrix"
+   ],
+   "file": "icons/table_chart.svg",
+   "format": "svg"
+  },
+  {
+   "id": "target",
+   "name": "target",
+   "tags": [
+    "goal",
+    "objective",
+    "aim",
+    "okr"
+   ],
+   "file": "icons/target.svg",
+   "format": "svg"
+  },
+  {
+   "id": "task_alt",
+   "name": "task alt",
+   "tags": [
+    "task",
+    "todo",
+    "done",
+    "checkbox"
+   ],
+   "file": "icons/task_alt.svg",
+   "format": "svg"
+  },
+  {
+   "id": "terminal",
+   "name": "terminal",
+   "tags": [
+    "console",
+    "cli",
+    "shell",
+    "developer"
+   ],
+   "file": "icons/terminal.svg",
+   "format": "svg"
+  },
+  {
+   "id": "thumb_down",
+   "name": "thumb down",
+   "tags": [
+    "dislike",
+    "reject",
+    "negative",
+    "disagree"
+   ],
+   "file": "icons/thumb_down.svg",
+   "format": "svg"
+  },
+  {
+   "id": "thumb_up",
+   "name": "thumb up",
+   "tags": [
+    "like",
+    "approve",
+    "positive",
+    "agree"
+   ],
+   "file": "icons/thumb_up.svg",
+   "format": "svg"
+  },
+  {
+   "id": "timeline",
+   "name": "timeline",
+   "tags": [
+    "roadmap",
+    "history",
+    "sequence"
+   ],
+   "file": "icons/timeline.svg",
+   "format": "svg"
+  },
+  {
+   "id": "timer",
+   "name": "timer",
+   "tags": [
+    "stopwatch",
+    "countdown",
+    "sprint"
+   ],
+   "file": "icons/timer.svg",
+   "format": "svg"
+  },
+  {
+   "id": "trending_down",
+   "name": "trending down",
+   "tags": [
+    "decline",
+    "decrease",
+    "loss"
+   ],
+   "file": "icons/trending_down.svg",
+   "format": "svg"
+  },
+  {
+   "id": "trending_flat",
+   "name": "trending flat",
+   "tags": [
+    "stable",
+    "flat",
+    "unchanged"
+   ],
+   "file": "icons/trending_flat.svg",
+   "format": "svg"
+  },
+  {
+   "id": "trending_up",
+   "name": "trending up",
+   "tags": [
+    "growth",
+    "increase",
+    "improvement"
+   ],
+   "file": "icons/trending_up.svg",
+   "format": "svg"
+  },
+  {
+   "id": "trophy",
+   "name": "trophy",
+   "tags": [
+    "trophy",
+    "winner",
+    "achievement",
+    "award"
+   ],
+   "file": "icons/trophy.svg",
+   "format": "svg"
+  },
+  {
+   "id": "update",
+   "name": "update",
+   "tags": [
+    "refresh",
+    "new version",
+    "upgrade"
+   ],
+   "file": "icons/update.svg",
+   "format": "svg"
+  },
+  {
+   "id": "upload",
+   "name": "upload",
+   "tags": [
+    "import",
+    "submit",
+    "send up"
+   ],
+   "file": "icons/upload.svg",
+   "format": "svg"
+  },
+  {
+   "id": "verified",
+   "name": "verified",
+   "tags": [
+    "approved",
+    "certified",
+    "quality"
+   ],
+   "file": "icons/verified.svg",
+   "format": "svg"
+  },
+  {
+   "id": "verified_user",
+   "name": "verified user",
+   "tags": [
+    "protected",
+    "secure check",
+    "trusted"
+   ],
+   "file": "icons/verified_user.svg",
+   "format": "svg"
+  },
+  {
+   "id": "visibility",
+   "name": "visibility",
+   "tags": [
+    "eye",
+    "transparency",
+    "watch",
+    "observe"
+   ],
+   "file": "icons/visibility.svg",
+   "format": "svg"
+  },
+  {
+   "id": "visibility_off",
+   "name": "visibility off",
+   "tags": [
+    "hidden",
+    "private",
+    "blind spot"
+   ],
+   "file": "icons/visibility_off.svg",
+   "format": "svg"
+  },
+  {
+   "id": "vpn_key",
+   "name": "vpn key",
+   "tags": [
+    "authentication",
+    "secret",
+    "token"
+   ],
+   "file": "icons/vpn_key.svg",
+   "format": "svg"
+  },
+  {
+   "id": "warning",
+   "name": "warning",
+   "tags": [
+    "risk",
+    "caution",
+    "alert"
+   ],
+   "file": "icons/warning.svg",
+   "format": "svg"
+  },
+  {
+   "id": "webhook",
+   "name": "webhook",
+   "tags": [
+    "automation",
+    "callback",
+    "integration"
+   ],
+   "file": "icons/webhook.svg",
+   "format": "svg"
+  },
+  {
+   "id": "work",
+   "name": "work",
+   "tags": [
+    "job",
+    "career",
+    "briefcase"
+   ],
+   "file": "icons/work.svg",
+   "format": "svg"
+  },
+  {
+   "id": "workspace_premium",
+   "name": "workspace premium",
+   "tags": [
+    "certificate",
+    "premium",
+    "award ribbon"
+   ],
+   "file": "icons/workspace_premium.svg",
+   "format": "svg"
+  },
+  {
+   "id": "zoom_in",
+   "name": "zoom in",
+   "tags": [
+    "magnify",
+    "enlarge",
+    "detail"
+   ],
+   "file": "icons/zoom_in.svg",
+   "format": "svg"
+  }
+ ]
+}
