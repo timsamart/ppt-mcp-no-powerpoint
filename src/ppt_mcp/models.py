@@ -122,3 +122,25 @@ class Position(BaseModel):
     top: float
     width: float
     height: float
+
+
+class ImagePlaceholderSpec(BaseModel):
+    """A governed image slot: intent + prompt (composed from a style profile
+    or supplied directly), targeting a picture placeholder or a labeled
+    freeform box (DESIGN.md §4.6)."""
+
+    image_intent: Annotated[str, Field(description="What the image should show, e.g. 'vision scene'")]
+    profile_id: Annotated[
+        str | None, Field(description="Style profile to compose the prompt from")
+    ] = None
+    prompt: Annotated[
+        str | None, Field(description="Explicit prompt (validated against the profile if one is set)")
+    ] = None
+    negative_prompt: str | None = None
+    aspect_ratio: str | None = None
+    alt_text: str | None = None
+    shape_ref: Annotated[
+        str | None, Field(description="Target picture placeholder (preferred)")
+    ] = None
+    position: Position | None = None
+    allow_freeform: bool = False

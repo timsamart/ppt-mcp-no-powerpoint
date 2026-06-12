@@ -40,6 +40,15 @@ EXPECTED_TOOLS = {
     "ppt_render_deck",
     "ppt_export_pdf",
     "ppt_visual_diff",
+    "ppt_set_style_profile",
+    "ppt_get_style_profile",
+    "ppt_list_style_profiles",
+    "ppt_delete_style_profile",
+    "ppt_compose_image_prompt",
+    "ppt_create_image_placeholder",
+    "ppt_list_image_placeholders",
+    "ppt_update_image_placeholder",
+    "ppt_fill_image_placeholder",
 }
 
 

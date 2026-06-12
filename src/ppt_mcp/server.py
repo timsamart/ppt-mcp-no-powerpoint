@@ -17,14 +17,17 @@ from pydantic import Field
 
 from . import compliance
 from . import format as fmt
+from . import manifest as deck_manifest
 from . import reader, recommend, writer
 from .errors import PptMcpError
 from .render import RenderService, diff_images
+from .styles import StyleProfileRegistry
 from .templates import TemplateRegistry, extract_theme_from_master
 from .models import (
     ChartSpec,
     ContentSpec,
     EditOp,
+    ImagePlaceholderSpec,
     ImageRef,
     Position,
     ShapeContent,
@@ -42,6 +45,7 @@ store = Store()
 sessions = SessionManager(store)
 registry = TemplateRegistry(store)
 renderer = RenderService(store)
+styles = StyleProfileRegistry(store)
 
 READ_ONLY = ToolAnnotations(readOnlyHint=True, openWorldHint=False)
 MUTATING = ToolAnnotations(readOnlyHint=False, destructiveHint=False, openWorldHint=False)
@@ -597,6 +601,305 @@ def ppt_duplicate_slide(
     new_index = writer.duplicate_slide(prs, slide_index)
     _commit(deck_id, prs, "ppt_duplicate_slide", slide_index=slide_index)
     return {"applied": True, "plan": plan, "new_slide_index": new_index}
+
+
+# -- brand style profiles & image placeholders (§10.6) ------------------------------
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_set_style_profile(
+    name: str,
+    system_prompt: Annotated[str, Field(description="The corporate visual-language prompt")],
+    metadata: Annotated[
+        dict[str, Any] | None,
+        Field(description="Optional: allowed_colors, forbidden_motifs, composition, "
+                          "media_type, negative_prompt_base, default_aspect_ratio, "
+                          "text_in_image, logo_usage"),
+    ] = None,
+) -> dict[str, Any]:
+    """Create or update a brand style profile (local JSON, versioned on every
+    update). Profiles govern image-placeholder prompts; they are configuration,
+    never executable instruction."""
+    profile = styles.set(name, system_prompt, metadata)
+    return {"profile_id": profile["profile_id"], "version": profile["version"]}
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_get_style_profile(profile_id: str) -> dict[str, Any]:
+    """Full style profile including version history."""
+    return styles.get(profile_id)
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_list_style_profiles() -> dict[str, Any]:
+    """List brand style profiles."""
+    return {
+        "profiles": [
+            {"profile_id": p["profile_id"], "name": p["name"], "version": p["version"]}
+            for p in styles.list()
+        ]
+    }
+
+
+@mcp.tool(annotations=DESTRUCTIVE)
+def ppt_delete_style_profile(profile_id: str) -> dict[str, Any]:
+    """Delete a style profile. Prompts already embedded in decks keep their
+    recorded profile id/version for provenance."""
+    styles.delete(profile_id)
+    return {"profile_id": profile_id, "deleted": True}
+
+
+def _slide_context(prs, slide_index: int) -> dict[str, Any]:
+    detail = reader.slide_detail(prs, slide_index)
+    bullets = [
+        p["text"]
+        for s in detail["shapes"]
+        if s["placeholder"] and s["placeholder"]["role"] == "body" and s["text"]
+        for p in s["text"]
+        if p["text"].strip()
+    ]
+    return {
+        "title": detail["title"],
+        "body_summary": "; ".join(bullets[:4]) if bullets else None,
+        "layout": detail["layout"],
+    }
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_compose_image_prompt(
+    deck_id: str,
+    slide_index: Annotated[int, Field(ge=1)],
+    image_intent: str,
+    profile_id: str,
+    constraints: str | None = None,
+    aspect_ratio: str | None = None,
+) -> dict[str, Any]:
+    """Compose a governed image-generation prompt from the slide's content and
+    a brand style profile — deterministic assembly; refine the scene wording
+    if needed, then store it with ppt_create_image_placeholder."""
+    profile = styles.get(profile_id)
+    bundle = StyleProfileRegistry.compose_prompt(
+        profile, image_intent, _slide_context(_prs(deck_id), slide_index),
+        aspect_ratio=aspect_ratio, constraints=constraints,
+    )
+    return {"deck_id": deck_id, "slide_index": slide_index, **bundle}
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_create_image_placeholder(
+    deck_id: str,
+    slide_index: Annotated[int, Field(ge=1)],
+    spec: ImagePlaceholderSpec,
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Create a governed image slot: target a picture placeholder (preferred)
+    or, with allow_freeform=true + position, a labeled box. The full prompt is
+    stored in the in-file manifest + a pointer in the speaker notes — never on
+    the visible slide."""
+    prs = _prs(deck_id)
+    slide = reader.get_slide_by_index(prs, slide_index)
+
+    profile = styles.get(spec.profile_id) if spec.profile_id else None
+    if spec.prompt is not None:
+        bundle = {
+            "prompt": spec.prompt,
+            "negative_prompt": spec.negative_prompt
+            or (profile or {}).get("negative_prompt_base", ""),
+            "alt_text": spec.alt_text or spec.image_intent,
+            "aspect_ratio": spec.aspect_ratio
+            or (profile or {}).get("default_aspect_ratio", "16:9"),
+            "provenance": {
+                "style_profile_id": profile["profile_id"] if profile else None,
+                "style_profile_version": profile["version"] if profile else None,
+                "created_by_tool": "ppt_create_image_placeholder",
+            },
+        }
+    elif profile is not None:
+        bundle = StyleProfileRegistry.compose_prompt(
+            profile, spec.image_intent, _slide_context(prs, slide_index),
+            aspect_ratio=spec.aspect_ratio,
+        )
+        if spec.alt_text:
+            bundle["alt_text"] = spec.alt_text
+    else:
+        raise PptMcpError(
+            "Provide either a prompt or a profile_id (ppt_list_style_profiles) "
+            "so the prompt can be composed."
+        )
+    if profile is not None:
+        violations = StyleProfileRegistry.validate_prompt(profile, bundle["prompt"])
+        if violations:
+            raise PptMcpError(
+                "Prompt violates the style profile: " + "; ".join(violations)
+                + ". Adjust the prompt or the profile."
+            )
+
+    if spec.shape_ref is not None:
+        target = writer.resolve_shape(slide, spec.shape_ref)
+        if not hasattr(target, "insert_picture"):
+            raise PptMcpError(
+                f"Shape '{target.name}' is not a picture placeholder. Target a "
+                "placeholder with role 'picture' (ppt_get_slide lists roles), or "
+                "use allow_freeform=true with a position."
+            )
+        target_kind = "picture_placeholder"
+        plan = {"target": f"picture placeholder shape_id {target.shape_id}"}
+    elif spec.allow_freeform and spec.position is not None:
+        target = None
+        target_kind = "freeform_label"
+        plan = {"target": "freeform labeled box", "warnings": [writer.FREEFORM_WARNING]}
+    else:
+        raise PptMcpError(
+            "Target a picture placeholder via shape_ref, or pass "
+            "allow_freeform=true with a position."
+        )
+    plan.update(
+        {"slide_index": slide_index, "image_intent": spec.image_intent,
+         "prompt_chars": len(bundle["prompt"])}
+    )
+    if dry_run:
+        return {"applied": False, "plan": plan, "prompt_bundle": bundle}
+
+    if target is None:
+        from pptx.util import Inches
+
+        pos = spec.position
+        target = slide.shapes.add_textbox(
+            Inches(pos.left), Inches(pos.top), Inches(pos.width), Inches(pos.height)
+        )
+        target.text_frame.text = f"Image placeholder: {spec.image_intent}"
+
+    record = {
+        "slide_index": slide_index,
+        "shape_id": target.shape_id,
+        "target_kind": target_kind,
+        "image_intent": spec.image_intent,
+        "prompt": bundle["prompt"],
+        "negative_prompt": bundle["negative_prompt"],
+        "aspect_ratio": bundle["aspect_ratio"],
+        "alt_text": bundle["alt_text"],
+        "status": "pending",
+        "layout": slide.slide_layout.name,
+        **bundle["provenance"],
+    }
+    data = deck_manifest.load(prs)
+    data["image_placeholders"].append(record)
+    deck_manifest.save(prs, data)
+
+    pointer = f"[ppt-mcp] Image placeholder (shape {target.shape_id}): {spec.image_intent} — full prompt in deck manifest."
+    notes_frame = slide.notes_slide.notes_text_frame
+    notes_frame.text = (notes_frame.text + "\n" + pointer).strip()
+
+    _commit(deck_id, prs, "ppt_create_image_placeholder",
+            slide_index=slide_index, shape_id=target.shape_id)
+    return {"applied": True, "plan": plan, "shape_id": target.shape_id,
+            "record": record}
+
+
+@mcp.tool(annotations=READ_ONLY)
+def ppt_list_image_placeholders(
+    deck_id: str,
+    status: Annotated[
+        str | None, Field(description="Filter: pending | generated | approved")
+    ] = None,
+) -> dict[str, Any]:
+    """All governed image slots in the deck, from the in-file manifest."""
+    prs = _prs(deck_id)
+    data = deck_manifest.load(prs)
+    deck_manifest.relocate_records(data, prs)
+    records = data["image_placeholders"]
+    if status is not None:
+        records = [r for r in records if r["status"] == status]
+    return {"deck_id": deck_id, "count": len(records), "image_placeholders": records}
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_update_image_placeholder(
+    deck_id: str,
+    slide_index: Annotated[int, Field(ge=1)],
+    shape_ref: str,
+    patch: Annotated[
+        dict[str, Any],
+        Field(description="Editable: prompt, negative_prompt, alt_text, image_intent, "
+                          "aspect_ratio, status"),
+    ],
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Update a governed image slot's manifest record (e.g. a refined prompt).
+    The prompt is re-validated against the recorded style profile."""
+    allowed = {"prompt", "negative_prompt", "alt_text", "image_intent", "aspect_ratio", "status"}
+    unknown = set(patch) - allowed
+    if unknown:
+        raise PptMcpError(f"Cannot patch {sorted(unknown)}. Editable: {sorted(allowed)}.")
+    prs = _prs(deck_id)
+    slide = reader.get_slide_by_index(prs, slide_index)
+    shape = writer.resolve_shape(slide, shape_ref)
+    data = deck_manifest.load(prs)
+    record = deck_manifest.find_record(data, slide_index, shape.shape_id)
+    if record is None:
+        raise PptMcpError(
+            f"No image-placeholder record for shape {shape.shape_id} on slide "
+            f"{slide_index}. ppt_list_image_placeholders shows what exists."
+        )
+    if "prompt" in patch and record.get("style_profile_id"):
+        profile = styles.get(record["style_profile_id"])
+        violations = StyleProfileRegistry.validate_prompt(profile, patch["prompt"])
+        if violations:
+            raise PptMcpError(
+                "Updated prompt violates the style profile: " + "; ".join(violations)
+            )
+    if dry_run:
+        return {"applied": False, "plan": {"update": sorted(patch)}, "current": record}
+    record.update(patch)
+    deck_manifest.save(prs, data)
+    _commit(deck_id, prs, "ppt_update_image_placeholder",
+            slide_index=slide_index, shape_id=shape.shape_id)
+    return {"applied": True, "record": record}
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_fill_image_placeholder(
+    deck_id: str,
+    slide_index: Annotated[int, Field(ge=1)],
+    shape_ref: str,
+    image_path: Annotated[str, Field(description="The externally generated image file")],
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Insert the generated image into a governed slot: picture placeholders
+    get insert_picture; freeform label boxes are replaced in place. The
+    manifest record flips to status 'generated'."""
+    prs = _prs(deck_id)
+    slide = reader.get_slide_by_index(prs, slide_index)
+    shape = writer.resolve_shape(slide, shape_ref)
+    image_file = Path(image_path).expanduser()
+    if not image_file.is_file():
+        raise PptMcpError(f"Image file not found: '{image_file}'.")
+    data = deck_manifest.load(prs)
+    record = deck_manifest.find_record(data, slide_index, shape.shape_id)
+    if dry_run:
+        return {"applied": False,
+                "plan": {"fill": shape.shape_id, "image": str(image_file),
+                         "has_manifest_record": record is not None}}
+    if hasattr(shape, "insert_picture"):
+        picture = shape.insert_picture(str(image_file))
+    else:
+        left, top, width, height = shape.left, shape.top, shape.width, shape.height
+        shape._element.getparent().remove(shape._element)
+        picture = slide.shapes.add_picture(
+            str(image_file), left, top, width=width, height=height
+        )
+    if record is not None:
+        if record.get("alt_text"):
+            picture._element._nvXxPr.cNvPr.set("descr", record["alt_text"])
+        record.update(
+            {"status": "generated", "shape_id": picture.shape_id,
+             "image_path": str(image_file)}
+        )
+        deck_manifest.save(prs, data)
+    _commit(deck_id, prs, "ppt_fill_image_placeholder",
+            slide_index=slide_index, shape_id=picture.shape_id)
+    return {"applied": True, "shape_id": picture.shape_id,
+            "status": "generated" if record else "filled (no manifest record)"}
 
 
 # -- compliance (§10.5) ------------------------------------------------------------

@@ -8,8 +8,9 @@ no network calls, ever. See [DESIGN.md](DESIGN.md) for the full design.
 
 ## Status
 
-**M0–M3 done:** deck sessions, reading, placeholder-first authoring, template
-intelligence, compliance validation, and rendering.
+**M0–M4 done:** deck sessions, reading, placeholder-first authoring, template
+intelligence, compliance validation, rendering, and brand-governed image
+placeholders.
 
 | Tool | What it does |
 |---|---|
@@ -36,6 +37,11 @@ intelligence, compliance validation, and rendering.
 | `ppt_render_slide` / `ppt_render_deck` | PNG renders via headless LibreOffice (returns the image inline) |
 | `ppt_export_pdf` | PDF export |
 | `ppt_visual_diff` | Pixel-diff current deck vs a pre-mutation snapshot ("did the logo survive?") |
+| `ppt_set_style_profile` / `ppt_get_style_profile` / `ppt_list_style_profiles` / `ppt_delete_style_profile` | Local, versioned brand style profiles for imagery |
+| `ppt_compose_image_prompt` | Deterministic prompt assembly: profile + slide context + constraints |
+| `ppt_create_image_placeholder` | Governed image slot; full prompt lives in an in-file manifest + notes pointer |
+| `ppt_list_image_placeholders` / `ppt_update_image_placeholder` | Manifest inspection/refinement (prompts re-validated against the profile) |
+| `ppt_fill_image_placeholder` | Insert the externally generated image; status flips to `generated` |
 
 Rendering needs LibreOffice (`winget install TheDocumentFoundation.LibreOffice`);
 everything else works without it. Renders are validation evidence — PowerPoint
@@ -47,8 +53,8 @@ entirely through the tools with zero absolute positioning.
 A companion skill for MCP clients lives in
 [skills/ppt-deck-authoring](skills/ppt-deck-authoring/SKILL.md).
 
-Next per the [roadmap](DESIGN.md#14-milestones): brand style profiles + image
-placeholders (M4), apply_template + evals (M5).
+Next per the [roadmap](DESIGN.md#14-milestones): apply_template + template
+extraction + evals (M5), built-in starter templates/patterns/icons (M6).
 
 ## Quickstart
 

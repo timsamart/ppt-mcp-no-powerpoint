@@ -42,6 +42,21 @@ never assembled from absolutely-positioned textboxes.
 - Prefer `ppt_set_placeholder_content` / `ppt_edit_text` over rebuilding
   slides. Keep slides attached to their existing layouts.
 
+## Corporate imagery
+
+Decks should not get random stock photos. The governed path:
+
+1. Store the corporate visual language once:
+   `ppt_set_style_profile(name, system_prompt, metadata)` (allowed colors,
+   forbidden motifs, composition rules).
+2. Per image: `ppt_compose_image_prompt(deck, slide, intent, profile_id)` —
+   refine the scene wording if needed.
+3. `ppt_create_image_placeholder` — targets a picture placeholder (preferred);
+   the full prompt travels inside the file (manifest + notes pointer), never
+   on the visible slide.
+4. Generate the image with whatever tool the user uses, then
+   `ppt_fill_image_placeholder(deck, slide, shape_ref, image_path)`.
+
 ## What to avoid
 
 - `allow_freeform=true` exists for table/image/chart placement but bypasses
