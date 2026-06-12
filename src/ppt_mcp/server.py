@@ -18,7 +18,7 @@ from pydantic import Field
 from . import compliance
 from . import format as fmt
 from . import manifest as deck_manifest
-from . import reader, recommend, writer
+from . import reader, recommend, retarget, writer
 from .errors import PptMcpError
 from .render import RenderService, diff_images
 from .styles import StyleProfileRegistry
@@ -959,6 +959,72 @@ def ppt_repair_compliance(
             level: len([f for f in remaining if f["severity"] == level])
             for level in ("error", "warning", "info")
         },
+    }
+
+
+@mcp.tool(annotations=DESTRUCTIVE)
+def ppt_apply_template(
+    deck_id: str,
+    template_id: str,
+    dry_run: Annotated[
+        bool,
+        Field(description="Default TRUE — always review the fidelity report before applying"),
+    ] = True,
+) -> dict[str, Any]:
+    """Re-target a deck onto a registered template: each slide is re-created
+    from the best-matching layout with its placeholder content migrated;
+    freeform/chart shapes are carried over unchanged and flagged. The dry-run
+    fidelity report enumerates per-slide risks. Applying snapshots first
+    (ppt_undo recovers) and runs compliance validation automatically."""
+    prs = _prs(deck_id)
+    entry = registry.get(template_id)
+    session = sessions.get(deck_id)
+    assets_dir = session.session_dir / "migration_assets"
+    new_prs, plan = retarget.retarget_deck(
+        prs, entry, registry.materialized_path(template_id), assets_dir, apply=not dry_run
+    )
+    if dry_run:
+        return {"applied": False, "template_id": template_id, "plan": plan}
+    sessions.snapshot(deck_id)
+    new_prs.save(str(session.working_path))
+    store.log_provenance("ppt_apply_template", deck_id=deck_id, template_id=template_id)
+    findings = compliance.validate(_prs(deck_id), entry)
+    return {
+        "applied": True,
+        "template_id": template_id,
+        "plan": plan,
+        "validation_summary": {
+            level: len([f for f in findings if f["severity"] == level])
+            for level in ("error", "warning", "info")
+        },
+        "validation_findings": findings,
+    }
+
+
+@mcp.tool(annotations=MUTATING)
+def ppt_extract_template_from_deck(
+    deck_id: str,
+    name: Annotated[str | None, Field(description="Name for the derived template")] = None,
+    version: str | None = None,
+) -> dict[str, Any]:
+    """Register an open deck's design system as a *derived* template (for the
+    'Final_v13_really_final.pptx' case where no clean .potx exists). Captures
+    masters, layouts, theme, and per-layout usage statistics from the deck's
+    slides. Curate the inferred intent tags afterwards with ppt_update_template."""
+    session = sessions.get(deck_id)
+    entry = registry.register(
+        session.working_path,
+        name=name or f"Derived from {deck_id}",
+        version=version,
+        derived=True,
+    )
+    return {
+        "already_registered": entry.get("already_registered", False),
+        "template_id": entry["template_id"],
+        "name": entry["name"],
+        "derived": True,
+        "layouts": len(entry["layouts"]),
+        "layout_usage": entry["layout_usage"],
     }
 
 

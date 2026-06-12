@@ -1,0 +1,51 @@
+<evaluation>
+  <!--
+    Eval suite per DESIGN.md §15 and the mcp-builder methodology.
+    All questions are read-only, independent, and verifiable by string
+    comparison against the deterministic fixture deck
+    evals/fixtures/eval_deck.pptx (rebuild: uv run python
+    scripts/make_eval_fixtures.py; verify answers: uv run python
+    scripts/compute_eval_answers.py).
+    Each question assumes a fresh session with the ppt-mcp server connected.
+  -->
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx. What is its aspect ratio, in W:H form?</question>
+    <answer>4:3</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx. What is the title of its last slide?</question>
+    <answer>Thank You</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx and extract its design system as a derived template. How many slide layouts does the derived template contain?</question>
+    <answer>11</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx, extract its design system as a template, and inspect it. Which layout (by name) contains a picture placeholder?</question>
+    <answer>Picture with Caption</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx and extract its theme. What is the major (heading) font of the theme font scheme?</question>
+    <answer>Calibri</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx and extract its theme. What is the hex value of theme accent color 1 (accent1), including the leading #?</question>
+    <answer>#4F81BD</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx. Searching all slide text and speaker notes, on which slide number does the phrase "audit trail" appear?</question>
+    <answer>3</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx and inspect slide 2. How many bullet paragraphs does its body placeholder contain?</question>
+    <answer>3</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx, extract its design system as a template, and validate the deck's compliance against it. Exactly one finding of rule C02 (non-theme font) exists. Which font name does it report?</question>
+    <answer>Comic Sans MS</answer>
+  </qa_pair>
+  <qa_pair>
+    <question>Open the deck at evals/fixtures/eval_deck.pptx, extract its design system as a template, and validate compliance against it. On which slide number is the C02 (non-theme font) violation?</question>
+    <answer>5</answer>
+  </qa_pair>
+</evaluation>

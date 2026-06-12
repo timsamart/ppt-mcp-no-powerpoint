@@ -8,9 +8,9 @@ no network calls, ever. See [DESIGN.md](DESIGN.md) for the full design.
 
 ## Status
 
-**M0–M4 done:** deck sessions, reading, placeholder-first authoring, template
-intelligence, compliance validation, rendering, and brand-governed image
-placeholders.
+**M0–M5 done:** deck sessions, reading, placeholder-first authoring, template
+intelligence, compliance validation, rendering, brand-governed image
+placeholders, template application, and the eval suite.
 
 | Tool | What it does |
 |---|---|
@@ -42,6 +42,8 @@ placeholders.
 | `ppt_create_image_placeholder` | Governed image slot; full prompt lives in an in-file manifest + notes pointer |
 | `ppt_list_image_placeholders` / `ppt_update_image_placeholder` | Manifest inspection/refinement (prompts re-validated against the profile) |
 | `ppt_fill_image_placeholder` | Insert the externally generated image; status flips to `generated` |
+| `ppt_apply_template` | Re-target a deck onto a template: per-slide fidelity report (dry-run default), placeholder content migrated, orphans carried over + flagged, auto-validation |
+| `ppt_extract_template_from_deck` | Recover a design system from a finished deck as a derived template with layout-usage stats |
 
 Rendering needs LibreOffice (`winget install TheDocumentFoundation.LibreOffice`);
 everything else works without it. Renders are validation evidence — PowerPoint
@@ -53,8 +55,10 @@ entirely through the tools with zero absolute positioning.
 A companion skill for MCP clients lives in
 [skills/ppt-deck-authoring](skills/ppt-deck-authoring/SKILL.md).
 
-Next per the [roadmap](DESIGN.md#14-milestones): apply_template + template
-extraction + evals (M5), built-in starter templates/patterns/icons (M6).
+The 10-question agent eval suite lives in [evals/](evals/README.md).
+
+Next per the [roadmap](DESIGN.md#14-milestones): M6 — built-in starter
+templates, slide patterns (business forms), vendored icon sets.
 
 ## Quickstart
 

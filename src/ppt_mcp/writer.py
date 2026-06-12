@@ -463,17 +463,14 @@ def move_slide(prs: PresentationType, slide_index: int, to_position: int) -> Non
     sld_id_lst.insert(to_position - 1, element)
 
 
-def duplicate_slide(prs: PresentationType, slide_index: int) -> int:
-    """Deep-copy a slide's shape tree and re-create its relationships (images
-    etc.) on a fresh slide, remapping relationship ids inside the copied XML.
-    The copy is placed directly after the source. Returns its 1-based index."""
-    source = get_slide_by_index(prs, slide_index)
-    dest = prs.slides.add_slide(source.slide_layout)
-
-    for element in list(dest.shapes._spTree):
-        if element.tag in _SHAPE_TAGS:
-            dest.shapes._spTree.remove(element)
-
+def clone_shape_elements(
+    source: Slide, dest: Slide, elements, reassign_ids: bool = False
+) -> list[int]:
+    """Deep-copy selected shape elements from one slide to another, re-creating
+    the underlying part relationships (images, charts, hyperlinks) and
+    remapping r:embed/r:link/r:id inside the copied XML. With reassign_ids,
+    cloned shapes get fresh ids unique on the destination slide. Returns the
+    cloned shapes' ids."""
     rid_map: dict[str, str] = {}
     for rid, rel in source.part.rels.items():
         if rel.reltype in (RT.SLIDE_LAYOUT, RT.NOTES_SLIDE):
@@ -484,16 +481,38 @@ def duplicate_slide(prs: PresentationType, slide_index: int) -> int:
             rid_map[rid] = dest.part.relate_to(rel.target_part, rel.reltype)
 
     rel_attrs = (qn("r:embed"), qn("r:link"), qn("r:id"))
-    for child in source.shapes._spTree:
-        if child.tag not in _SHAPE_TAGS:
-            continue
+    next_id = max((s.shape_id for s in dest.shapes), default=1) + 1
+    new_ids: list[int] = []
+    for child in elements:
         clone = deepcopy(child)
         for element in clone.iter():
             for attr in rel_attrs:
                 value = element.get(attr)
                 if value and value in rid_map:
                     element.set(attr, rid_map[value])
+        cnvpr = clone.find(f".//{qn('p:cNvPr')}")
+        if reassign_ids and cnvpr is not None:
+            cnvpr.set("id", str(next_id))
+            next_id += 1
         dest.shapes._spTree.append(clone)
+        if cnvpr is not None:
+            new_ids.append(int(cnvpr.get("id")))
+    return new_ids
+
+
+def duplicate_slide(prs: PresentationType, slide_index: int) -> int:
+    """Deep-copy a slide's shape tree and relationships onto a fresh slide.
+    The copy is placed directly after the source. Returns its 1-based index."""
+    source = get_slide_by_index(prs, slide_index)
+    dest = prs.slides.add_slide(source.slide_layout)
+
+    for element in list(dest.shapes._spTree):
+        if element.tag in _SHAPE_TAGS:
+            dest.shapes._spTree.remove(element)
+
+    clone_shape_elements(
+        source, dest, [c for c in source.shapes._spTree if c.tag in _SHAPE_TAGS]
+    )
 
     if source.has_notes_slide:
         dest.notes_slide.notes_text_frame.text = (

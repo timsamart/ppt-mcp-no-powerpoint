@@ -204,6 +204,9 @@ def parse_template(path: Path) -> dict[str, Any]:
             }
         )
     width, height = int(prs.slide_width), int(prs.slide_height)
+    usage: dict[str, int] = {}
+    for slide in prs.slides:
+        usage[slide.slide_layout.name] = usage.get(slide.slide_layout.name, 0) + 1
     return {
         "slide_size": {
             "width_in": emu_to_inches(width),
@@ -213,6 +216,7 @@ def parse_template(path: Path) -> dict[str, Any]:
         "layouts": layouts,
         "theme": extract_theme_from_master(prs.slide_masters[0]),
         "example_slide_count": len(prs.slides),
+        "layout_usage": usage,
     }
 
 
@@ -249,6 +253,7 @@ class TemplateRegistry:
         name: str | None = None,
         version: str | None = None,
         metadata: dict[str, Any] | None = None,
+        derived: bool = False,
     ) -> dict[str, Any]:
         source = Path(path).expanduser().resolve()
         if not source.is_file():
@@ -285,6 +290,7 @@ class TemplateRegistry:
             "original_path": str(source),
             "sha256": digest,
             "builtin": False,
+            "derived": derived,
             "metadata": metadata or {},
             **parsed,
         }

@@ -49,6 +49,8 @@ EXPECTED_TOOLS = {
     "ppt_list_image_placeholders",
     "ppt_update_image_placeholder",
     "ppt_fill_image_placeholder",
+    "ppt_apply_template",
+    "ppt_extract_template_from_deck",
 }
 
 
